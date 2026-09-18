@@ -1,173 +1,176 @@
-// assets/js/runner.js - 共享的 Judge0 API 執行引擎
-let resolveCin = null;
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第一課：cout 輸出與 cin 輸入 - C++ 學習教室</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome 圖示 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
 
-// 更新終端機顯示
-function appendConsole(html) {
-    const consoleOutput = document.getElementById('console-output');
-    if (consoleOutput) {
-        consoleOutput.innerHTML += `<div>${html}</div>`;
-        consoleOutput.scrollTop = consoleOutput.scrollHeight;
-    }
-}
+    <!-- 頂部導覽列 -->
+    <header class="bg-slate-800 px-6 py-3 flex items-center justify-between border-b border-slate-700 shadow-md">
+        <div class="flex items-center space-x-4">
+            <span class="text-blue-400 font-bold flex items-center gap-2 text-lg">
+                <i class="fa-solid fa-code"></i> C++ 程式設計入門
+            </span>
+            <span class="text-slate-600">|</span>
+            <span class="text-white font-semibold">第一課：cout 輸出與 cin 輸入</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="resetCode()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium rounded transition flex items-center gap-1">
+                <i class="fa-solid fa-rotate-left"></i> 重置程式碼
+            </button>
+            <!-- 點擊直接觸發 runner.js 的 runCode() -->
+            <button onclick="handleStartRun()" class="px-5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm rounded shadow transition flex items-center gap-2">
+                <i class="fa-solid fa-play"></i> 執行程式 (Run)
+            </button>
+        </div>
+    </header>
 
-// 清空終端機
-function clearConsole() {
-    const consoleOutput = document.getElementById('console-output');
-    if (consoleOutput) consoleOutput.innerHTML = '';
-}
-
-// 轉義 HTML 避免 XSS
-function escapeHtml(unsafe) {
-    if (unsafe == null) return '';
-    return unsafe.toString()
-         .replace(/&/g, "&amp;")
-         .replace(/</g, "&lt;")
-         .replace(/>/g, "&gt;")
-         .replace(/"/g, "&quot;")
-         .replace(/'/g, "&#039;");
-}
-
-// 請求 cin 輸入 UI
-function requestStdinUI() {
-    return new Promise((resolve) => {
-        const container = document.getElementById('cin-prompt-container');
-        const input = document.getElementById('cin-input');
+    <!-- 主要內容區 -->
+    <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
         
-        resolveCin = resolve;
-        if (container) container.classList.remove('hidden');
-        if (input) {
-            input.value = '';
-            input.placeholder = "請輸入執行所需的資料...";
-            input.focus();
-        }
-    });
-}
+        <!-- 左側：課程說明與任務導覽 -->
+        <aside class="w-full lg:w-96 bg-slate-800/80 p-6 border-r border-slate-700 flex flex-col overflow-y-auto">
+            <div class="space-y-4">
+                <div class="inline-block bg-blue-500/20 text-blue-300 text-xs px-2.5 py-1 rounded-full font-semibold">
+                    Lesson 01
+                </div>
+                <h1 class="text-xl font-bold text-white">標準輸出 cout 與輸入 cin</h1>
+                
+                <p class="text-slate-300 text-sm leading-relaxed">
+                    在 C++ 中，我們使用 <code class="text-blue-300 bg-slate-900 px-1.5 py-0.5 rounded font-mono">cout</code> 將資訊列印到螢幕，並使用 <code class="text-amber-300 bg-slate-900 px-1.5 py-0.5 rounded font-mono">cin</code> 讀取使用者的輸入。
+                </p>
 
-function handleCinSubmit(e) {
-    if (e.key === 'Enter') submitCinValue();
-}
+                <div class="bg-slate-900/60 p-3 rounded-lg border border-slate-700 text-xs space-y-2">
+                    <div class="font-bold text-slate-200">💡 語法重點：</div>
+                    <ul class="list-disc list-inside text-slate-400 space-y-1">
+                        <li><code class="text-blue-300 font-mono">cout &lt;&lt; "內容";</code> ：串接輸出</li>
+                        <li><code class="text-amber-300 font-mono">cin &gt;&gt; 變數;</code> ：讀取輸入資料</li>
+                        <li><code class="text-slate-200 font-mono">endl</code> ：換行（Equivalent to \n）</li>
+                    </ul>
+                </div>
 
-function submitCinValue() {
-    const input = document.getElementById('cin-input');
-    const container = document.getElementById('cin-prompt-container');
-    if (container) container.classList.add('hidden');
-    if (resolveCin && input) {
-        resolveCin(input.value);
-        resolveCin = null;
-    }
-}
+                <div class="border-t border-slate-700 pt-4 mt-4">
+                    <h2 class="font-bold text-white text-sm mb-2">🎯 本課任務：</h2>
+                    <p class="text-slate-300 text-xs leading-relaxed mb-3">
+                        寫一個程式，先讀取使用者輸入的名字，接著輸出句型：<br>
+                        <span class="text-emerald-400 font-mono">"Hello, [名字]! Welcome to C++."</span>
+                    </p>
 
-async function runCode() {
-    const consoleBox = document.getElementById('console-output') || 
-                       document.getElementById('console') || 
-                       document.getElementById('output');
-    
-    if (!consoleBox) {
-        alert("找不到終端機輸出框！");
-        return;
-    }
-    
-    consoleBox.innerHTML = '<span style="color: #60a5fa;">[系統] 正在將程式碼編碼並傳送至 Judge0 雲端 GCC 編譯器...</span><br>';
+                    <button onclick="toggleAnswer()" id="answer-btn" class="w-full py-2 bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/40 rounded text-xs transition font-semibold flex items-center justify-center gap-1">
+                        <i class="fa-regular fa-lightbulb"></i> 切換參考解答
+                    </button>
+                </div>
+            </div>
 
-    try {
-        let code = "";
-        const textarea = document.getElementById('code-editor') || 
-                         document.getElementById('codeEditor') || 
-                         document.getElementById('code');
-        
-        if (typeof editor !== 'undefined' && typeof editor.getValue === 'function') {
-            code = editor.getValue();
-        } else if (textarea) {
-            code = textarea.value;
-        } else {
-            throw new Error("找不到程式碼編輯器元件！");
-        }
+            <div class="mt-auto pt-6 text-xs text-slate-500 border-t border-slate-700/50">
+                執行引擎：Judge0 Cloud GCC 9.2.0
+            </div>
+        </aside>
 
-        // 💡 關鍵修復：按照 Judge0 官方強制要求，將程式碼轉為 Base64 (支援中文與特殊字元)
-        const encodedCode = btoa(unescape(encodeURIComponent(code)));
-        const cacheBuster = Date.now();
-        const url = `https://ce.judge0.com/submissions?wait=true&base64_encoded=true&_cb=${cacheBuster}`;
+        <!-- 右側：編輯器與 Console -->
+        <main class="flex-1 flex flex-col bg-slate-950">
+            
+            <!-- Code Editor 區段 -->
+            <div class="flex-1 p-4 border-b border-slate-800 flex flex-col min-h-[280px]">
+                <div class="text-xs text-slate-400 mb-2 flex justify-between items-center">
+                    <span class="font-mono flex items-center gap-2">
+                        <i class="fa-regular fa-file-code text-blue-400"></i> main.cpp
+                    </span>
+                    <span class="text-xs text-slate-500">C++17</span>
+                </div>
+                <!-- 讀取器對應 ID: code-editor -->
+                <textarea id="code-editor" class="flex-1 bg-slate-900 text-slate-100 p-4 font-mono text-sm rounded border border-slate-800 focus:outline-none focus:border-slate-600 resize-none leading-6" spellcheck="false"></textarea>
+            </div>
 
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json' 
-            },
-            body: JSON.stringify({
-                source_code: encodedCode,
-                language_id: 54, // C++ (GCC 9.2.0)
-                stdin: window.currentStdin || ""
-            })
-        });
+            <!-- Standard Input (stdin) 設定區 -->
+            <div class="p-3 bg-slate-900 border-b border-slate-800 flex items-center gap-3">
+                <label for="stdin-input" class="text-xs text-amber-400 font-mono font-bold whitespace-nowrap flex items-center gap-1.5">
+                    <i class="fa-solid fa-keyboard"></i> Stdin 輸入 (cin 讀取內容):
+                </label>
+                <input type="text" id="stdin-input" placeholder="例如：Alex （若有多個 cin 讀取，請用空白分隔）" 
+                       oninput="updateStdinValue(this.value)"
+                       class="flex-1 bg-slate-950 border border-slate-700 rounded px-3 py-1 text-xs text-amber-200 focus:outline-none focus:border-amber-400 font-mono">
+            </div>
 
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`API 錯誤 (HTTP ${response.status}): ${errorText}`);
-        }
+            <!-- Console 區段 (對應 runner.js 的 ID: console-output) -->
+            <div class="h-64 bg-slate-950 p-4 flex flex-col relative">
+                <div class="text-xs text-slate-400 mb-2 flex justify-between items-center">
+                    <span class="font-mono flex items-center gap-2">
+                        <i class="fa-solid fa-terminal text-emerald-400"></i> Console 終端機
+                    </span>
+                    <button onclick="clearConsole()" class="text-xs text-slate-500 hover:text-slate-300">清空終端機</button>
+                </div>
+                
+                <!-- 終端機文字顯示容器 -->
+                <div id="console-output" class="flex-1 font-mono text-xs overflow-y-auto bg-slate-900/90 p-3 rounded border border-slate-800 space-y-1">
+                    <span class="text-slate-500">// 點擊右上角「執行程式 (Run)」進行編譯與執行...</span>
+                </div>
 
-        const result = await response.json();
+                <!-- 動態 cin 輸入跳彈視窗 (對應 runner.js 的 requestStdinUI) -->
+                <div id="cin-prompt-container" class="hidden absolute bottom-4 left-4 right-4 bg-slate-800/95 p-3 rounded-lg border border-amber-500/60 shadow-xl flex items-center gap-2 backdrop-blur">
+                    <span class="text-xs text-amber-400 font-mono font-bold whitespace-nowrap">▶ 輸入資料:</span>
+                    <input type="text" id="cin-input" onkeydown="handleCinSubmit(event)" class="flex-1 bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-xs text-amber-200 focus:outline-none focus:border-amber-400 font-mono">
+                    <button onclick="submitCinValue()" class="px-4 py-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded transition">送出</button>
+                </div>
+            </div>
 
-        // 由於我們請求時指定 base64_encoded=true，API 回傳的 stdout 與 compile_output 會是 Base64 格式，需要解碼回來
-        const decodeBase64 = (base64Str) => {
-            if (!base64Str) return "";
-            try {
-                return decodeURIComponent(escape(atob(base64Str)));
-            } catch (e) {
-                return atob(base64Str); // 備用解碼
-            }
+        </main>
+    </div>
+
+    <!-- 載入共享執行檔 runner.js -->
+    <script src="assets/js/runner.js"></script>
+
+    <!-- 頁面初始化與輔助邏輯 -->
+    <script>
+        const defaultCode = `#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string name;\n    cout << "Please enter your name: ";\n    if (cin >> name) {\n        cout << "\\nHello, " << name << "! Welcome to C++." << endl;\n    } else {\n        cout << "\\n[提示] 未接收到 stdin 輸入！" << endl;\n    }\n    return 0;\n}`;
+
+        const solutionCode = `#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string name;\n    cin >> name;\n    cout << "Hello, " << name << "! Welcome to C++." << endl;\n    return 0;\n}`;
+
+        let showingSolution = false;
+
+        window.onload = () => {
+            document.getElementById('code-editor').value = defaultCode;
+            document.getElementById('stdin-input').value = "Alex";
+            window.currentStdin = "Alex"; // 初始化全域 stdin
         };
 
-        const compileOutput = decodeBase64(result.compile_output);
-        const stdout = decodeBase64(result.stdout);
-        const stderr = decodeBase64(result.stderr);
-
-        // 1. 檢查編譯失敗 (status.id === 6 代表 Compilation Error)
-        if (result.status && result.status.id === 6) {
-            consoleBox.innerHTML += `<br><span style="color: #f87171; font-weight: bold;">❌ [編譯失敗 Compile Error]</span><br>`;
-            consoleBox.innerHTML += `<pre style="color: #fca5a5; background: #2d1618; padding: 10px; border-radius: 6px; white-space: pre-wrap; margin-top: 5px;">${escapeHtml(compileOutput || '語法錯誤')}</pre>`;
-            return;
+        function updateStdinValue(val) {
+            window.currentStdin = val;
         }
 
-        // 2. 檢查執行期錯誤
-        if (result.status && result.status.id >= 7) {
-            consoleBox.innerHTML += `<br><span style="color: #f87171; font-weight: bold;">❌ [執行期錯誤: ${result.status.description}]</span><br>`;
-            if (stderr) {
-                consoleBox.innerHTML += `<pre style="color: #fca5a5; background: #2d1618; padding: 10px; white-space: pre-wrap; margin-top: 5px;">${escapeHtml(stderr)}</pre>`;
+        function handleStartRun() {
+            // 同步最新的 stdin 輸入值到全域變數
+            window.currentStdin = document.getElementById('stdin-input').value;
+            // 呼叫 runner.js 中的核心函式
+            runCode();
+        }
+
+        function resetCode() {
+            document.getElementById('code-editor').value = defaultCode;
+            document.getElementById('stdin-input').value = "Alex";
+            window.currentStdin = "Alex";
+            showingSolution = false;
+            document.getElementById('answer-btn').innerHTML = `<i class="fa-regular fa-lightbulb"></i> 切換參考解答`;
+            clearConsole();
+        }
+
+        function toggleAnswer() {
+            if (showingSolution) {
+                document.getElementById('code-editor').value = defaultCode;
+                document.getElementById('answer-btn').innerHTML = `<i class="fa-regular fa-lightbulb"></i> 切換參考解答`;
+                showingSolution = false;
+            } else {
+                document.getElementById('code-editor').value = solutionCode;
+                document.getElementById('answer-btn').innerHTML = `<i class="fa-solid fa-rotate-left"></i> 切換回練習範本`;
+                showingSolution = true;
             }
-            return;
         }
-
-        // 3. 成功執行
-        consoleBox.innerHTML += `<br><span style="color: #4ade80; font-weight: bold;">[系統] 程式執行成功 (Exit Code 0)</span><br><br>`;
-        if (stdout) {
-            consoleBox.innerHTML += `<pre style="color: #fbbf24; font-size: 15px; font-weight: bold; white-space: pre-wrap; margin-top: 5px;">${escapeHtml(stdout)}</pre>`;
-        } else {
-            consoleBox.innerHTML += `<span style="color: #94a3b8;">(程式無任何輸出)</span><br>`;
-        }
-
-    } catch (err) {
-        consoleBox.innerHTML += `<br><span style="color: #f87171; font-weight: bold;">❌ [例外錯誤]:</span><br>`;
-        consoleBox.innerHTML += `<pre style="color: #fca5a5; margin-top: 5px;">${escapeHtml(err.message)}</pre>`;
-        console.error("執行崩潰錯誤詳情：", err);
-    }
-}
-
-function escapeHtml(text) {
-    if (!text) return "";
-    return text
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-// HTML 字元跳脫函式
-function escapeHtml(text) {
-    if (!text) return "";
-    return text
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
+    </script>
+</body>
+</html>
