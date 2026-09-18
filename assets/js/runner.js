@@ -58,20 +58,18 @@ function submitCinValue() {
 }
 
 async function runCode() {
-    // 精準對應你的 HTML ID: console-output
     const consoleBox = document.getElementById('console-output') || 
                        document.getElementById('console') || 
                        document.getElementById('output');
     
     if (!consoleBox) {
-        alert("找不到終端機輸出框（#console-output）！");
+        alert("找不到終端機輸出框！");
         return;
     }
     
     consoleBox.innerHTML = '<span style="color: #60a5fa;">[系統] 正在將程式碼傳送至 Judge0 雲端 GCC 編譯器...</span><br>';
 
     try {
-        // 精準對應你的 HTML ID: code-editor
         let code = "";
         const textarea = document.getElementById('code-editor') || 
                          document.getElementById('codeEditor') || 
@@ -82,27 +80,29 @@ async function runCode() {
         } else if (textarea) {
             code = textarea.value;
         } else {
-            throw new Error("找不到程式碼編輯器元件（#code-editor）！");
+            throw new Error("找不到程式碼編輯器元件！");
         }
 
-        // 加上破壞快取的隨機註解，逼迫 Judge0 重新編譯
-        code += `\n// _no_cache_${Date.now()} \n`;
+        // 💡 關鍵修正：透過 URL 加上隨機參數來破壞快取，絕對不污染學生的程式碼本體！
+        const cacheBuster = Date.now();
+        const url = `https://ce.judge0.com/submissions?wait=true&base64_encoded=false&_cb=${cacheBuster}`;
 
-        // 發送 API 請求（加上 base64_encoded=false 確保回傳純文字）
-        const response = await fetch('https://ce.judge0.com/submissions?wait=true&base64_encoded=false', {
+        const response = await fetch(url, {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json' 
             },
             body: JSON.stringify({
                 source_code: code,
-                language_id: 54, // C++ (GCC 9.2.0)
+                language_id: 54, // 確保這裡是純數字
                 stdin: window.currentStdin || ""
             })
         });
 
         if (!response.ok) {
-            throw new Error(`API 伺服器錯誤狀態碼: ${response.status}`);
+            // 把伺服器回應的詳細錯誤內容讀出來印在畫面上，方便我們一眼看出問題
+            const errorText = await response.text();
+            throw new Error(`API 錯誤 (HTTP ${response.status}): ${errorText}`);
         }
 
         const result = await response.json();
@@ -132,13 +132,12 @@ async function runCode() {
         }
 
     } catch (err) {
-        consoleBox.innerHTML += `<br><span style="color: #f87171; font-weight: bold;">❌ [執行發生例外錯誤]:</span><br>`;
+        consoleBox.innerHTML += `<br><span style="color: #f87171; font-weight: bold;">❌ [例外錯誤]:</span><br>`;
         consoleBox.innerHTML += `<pre style="color: #fca5a5; margin-top: 5px;">${escapeHtml(err.message)}</pre>`;
         console.error("執行崩潰錯誤詳情：", err);
     }
 }
 
-// HTML 字元跳脫函式
 function escapeHtml(text) {
     if (!text) return "";
     return text
