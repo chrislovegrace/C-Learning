@@ -67,7 +67,7 @@ async function runCode() {
         return;
     }
     
-    consoleBox.innerHTML = '<span style="color: #60a5fa;">[系統] 正在將程式碼傳送至 Judge0 雲端 GCC 編譯器...</span><br>';
+    consoleBox.innerHTML = '<span style="color: #60a5fa;">[系統] 正在將程式碼編碼並傳送至 Judge0 雲端 GCC 編譯器...</span><br>';
 
     try {
         let code = "";
@@ -83,9 +83,10 @@ async function runCode() {
             throw new Error("找不到程式碼編輯器元件！");
         }
 
-        // 💡 關鍵修正：透過 URL 加上隨機參數來破壞快取，絕對不污染學生的程式碼本體！
+        // 💡 關鍵修復：按照 Judge0 官方強制要求，將程式碼轉為 Base64 (支援中文與特殊字元)
+        const encodedCode = btoa(unescape(encodeURIComponent(code)));
         const cacheBuster = Date.now();
-        const url = `https://ce.judge0.com/submissions?wait=true&base64_encoded=false&_cb=${cacheBuster}`;
+        const url = `https://ce.judge0.com/submissions?wait=true&base64_encoded=true&_cb=${cacheBuster}`;
 
         const response = await fetch(url, {
             method: 'POST',
@@ -93,40 +94,53 @@ async function runCode() {
                 'Content-Type': 'application/json' 
             },
             body: JSON.stringify({
-                source_code: code,
-                language_id: 54, // 確保這裡是純數字
+                source_code: encodedCode,
+                language_id: 54, // C++ (GCC 9.2.0)
                 stdin: window.currentStdin || ""
             })
         });
 
         if (!response.ok) {
-            // 把伺服器回應的詳細錯誤內容讀出來印在畫面上，方便我們一眼看出問題
             const errorText = await response.text();
             throw new Error(`API 錯誤 (HTTP ${response.status}): ${errorText}`);
         }
 
         const result = await response.json();
 
+        // 由於我們請求時指定 base64_encoded=true，API 回傳的 stdout 與 compile_output 會是 Base64 格式，需要解碼回來
+        const decodeBase64 = (base64Str) => {
+            if (!base64Str) return "";
+            try {
+                return decodeURIComponent(escape(atob(base64Str)));
+            } catch (e) {
+                return atob(base64Str); // 備用解碼
+            }
+        };
+
+        const compileOutput = decodeBase64(result.compile_output);
+        const stdout = decodeBase64(result.stdout);
+        const stderr = decodeBase64(result.stderr);
+
         // 1. 檢查編譯失敗 (status.id === 6 代表 Compilation Error)
         if (result.status && result.status.id === 6) {
             consoleBox.innerHTML += `<br><span style="color: #f87171; font-weight: bold;">❌ [編譯失敗 Compile Error]</span><br>`;
-            consoleBox.innerHTML += `<pre style="color: #fca5a5; background: #2d1618; padding: 10px; border-radius: 6px; white-space: pre-wrap; margin-top: 5px;">${escapeHtml(result.compile_output || '語法錯誤')}</pre>`;
+            consoleBox.innerHTML += `<pre style="color: #fca5a5; background: #2d1618; padding: 10px; border-radius: 6px; white-space: pre-wrap; margin-top: 5px;">${escapeHtml(compileOutput || '語法錯誤')}</pre>`;
             return;
         }
 
         // 2. 檢查執行期錯誤
         if (result.status && result.status.id >= 7) {
             consoleBox.innerHTML += `<br><span style="color: #f87171; font-weight: bold;">❌ [執行期錯誤: ${result.status.description}]</span><br>`;
-            if (result.stderr) {
-                consoleBox.innerHTML += `<pre style="color: #fca5a5; background: #2d1618; padding: 10px; white-space: pre-wrap; margin-top: 5px;">${escapeHtml(result.stderr)}</pre>`;
+            if (stderr) {
+                consoleBox.innerHTML += `<pre style="color: #fca5a5; background: #2d1618; padding: 10px; white-space: pre-wrap; margin-top: 5px;">${escapeHtml(stderr)}</pre>`;
             }
             return;
         }
 
         // 3. 成功執行
         consoleBox.innerHTML += `<br><span style="color: #4ade80; font-weight: bold;">[系統] 程式執行成功 (Exit Code 0)</span><br><br>`;
-        if (result.stdout) {
-            consoleBox.innerHTML += `<pre style="color: #fbbf24; font-size: 15px; font-weight: bold; white-space: pre-wrap; margin-top: 5px;">${escapeHtml(result.stdout)}</pre>`;
+        if (stdout) {
+            consoleBox.innerHTML += `<pre style="color: #fbbf24; font-size: 15px; font-weight: bold; white-space: pre-wrap; margin-top: 5px;">${escapeHtml(stdout)}</pre>`;
         } else {
             consoleBox.innerHTML += `<span style="color: #94a3b8;">(程式無任何輸出)</span><br>`;
         }
@@ -147,7 +161,6 @@ function escapeHtml(text) {
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
 }
-
 // HTML 字元跳脫函式
 function escapeHtml(text) {
     if (!text) return "";
