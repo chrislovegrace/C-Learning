@@ -1,485 +1,173 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>C++ 互動教學平台 - 輸入輸出與運算子</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
+// assets/js/runner.js - 共享的 Judge0 API 執行引擎
+let resolveCin = null;
 
-    <!-- 頂部導覽列 Navigation -->
-    <header class="bg-slate-800 px-6 py-3 flex items-center justify-between border-b border-slate-700 shadow-md">
-        <div class="flex items-center space-x-4">
-            <span class="text-blue-400 font-bold flex items-center gap-2">
-                <i class="fa-solid fa-code"></i> C++ 互動學習教室
-            </span>
-            <span class="text-slate-600">|</span>
-            <span id="current-lesson-title" class="text-white font-semibold">第一課：cout 輸出與 cin 輸入</span>
-        </div>
-        <div class="flex items-center gap-3">
-            <button onclick="resetCode()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium rounded transition flex items-center gap-1">
-                <i class="fa-solid fa-rotate-left"></i> 重置程式碼
-            </button>
-            <button onclick="runCode()" class="px-5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm rounded shadow transition flex items-center gap-2">
-                <i class="fa-solid fa-play"></i> 執行程式
-            </button>
-        </div>
-    </header>
+// 更新終端機顯示
+function appendConsole(html) {
+    const consoleOutput = document.getElementById('console-output');
+    if (consoleOutput) {
+        consoleOutput.innerHTML += `<div>${html}</div>`;
+        consoleOutput.scrollTop = consoleOutput.scrollHeight;
+    }
+}
 
-    <!-- 主要區域 Main Content -->
-    <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+// 清空終端機
+function clearConsole() {
+    const consoleOutput = document.getElementById('console-output');
+    if (consoleOutput) consoleOutput.innerHTML = '';
+}
+
+// 轉義 HTML 避免 XSS
+function escapeHtml(unsafe) {
+    if (unsafe == null) return '';
+    return unsafe.toString()
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+}
+
+// 請求 cin 輸入 UI
+function requestStdinUI() {
+    return new Promise((resolve) => {
+        const container = document.getElementById('cin-prompt-container');
+        const input = document.getElementById('cin-input');
         
-        <!-- 左側：教學內容與單元導覽 -->
-        <aside class="w-full lg:w-96 bg-slate-800/80 p-5 border-r border-slate-700 flex flex-col overflow-y-auto">
-            
-            <!-- 單元切換頁籤 -->
-            <div class="mb-4">
-                <label class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">選擇學習單元</label>
-                <div class="grid grid-cols-2 gap-2" id="lesson-tabs">
-                    <button onclick="switchLesson(0)" id="tab-0" class="tab-btn active p-2 text-xs font-medium rounded border transition text-left">1. 輸入與輸出</button>
-                    <button onclick="switchLesson(1)" id="tab-1" class="tab-btn p-2 text-xs font-medium rounded border transition text-left">2. 變數與型別</button>
-                    <button onclick="switchLesson(2)" id="tab-2" class="tab-btn p-2 text-xs font-medium rounded border transition text-left">3. 算術運算子</button>
-                    <button onclick="switchLesson(3)" id="tab-3" class="tab-btn p-2 text-xs font-medium rounded border transition text-left">4. 綜合實戰題</button>
-                </div>
-            </div>
+        resolveCin = resolve;
+        if (container) container.classList.remove('hidden');
+        if (input) {
+            input.value = '';
+            input.placeholder = "請輸入執行所需的資料...";
+            input.focus();
+        }
+    });
+}
 
-            <hr class="border-slate-700 my-2">
+function handleCinSubmit(e) {
+    if (e.key === 'Enter') submitCinValue();
+}
 
-            <!-- 動態教學說明內容 -->
-            <div id="tutorial-content" class="flex-1 space-y-4 text-slate-300 text-sm leading-relaxed overflow-y-auto pr-1">
-                <!-- 由 JavaScript 動態注入教學文字 -->
-            </div>
+function submitCinValue() {
+    const input = document.getElementById('cin-input');
+    const container = document.getElementById('cin-prompt-container');
+    if (container) container.classList.add('hidden');
+    if (resolveCin && input) {
+        resolveCin(input.value);
+        resolveCin = null;
+    }
+}
 
-            <!-- 底部分頁導覽按鈕 -->
-            <div class="pt-4 mt-auto border-t border-slate-700 flex justify-between items-center">
-                <button id="prev-btn" onclick="prevLesson()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 rounded text-xs text-white disabled:opacity-40">
-                    <i class="fa-solid fa-arrow-left"></i> 上一課
-                </button>
-                <button id="next-btn" onclick="nextLesson()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 rounded text-xs text-white font-semibold">
-                    下一課 <i class="fa-solid fa-arrow-right"></i>
-                </button>
-            </div>
-        </aside>
+async function runCode() {
+    const consoleBox = document.getElementById('console-output') || 
+                       document.getElementById('console') || 
+                       document.getElementById('output');
+    
+    if (!consoleBox) {
+        alert("找不到終端機輸出框！");
+        return;
+    }
+    
+    consoleBox.innerHTML = '<span style="color: #60a5fa;">[系統] 正在將程式碼編碼並傳送至 Judge0 雲端 GCC 編譯器...</span><br>';
 
-        <!-- 右側：編輯器與終端機 -->
-        <main class="flex-1 flex flex-col bg-slate-950">
-            
-            <!-- 程式碼編輯區 -->
-            <div class="flex-1 p-4 border-b border-slate-800 flex flex-col min-h-[300px]">
-                <div class="text-xs text-slate-400 mb-2 flex justify-between items-center">
-                    <span class="font-mono flex items-center gap-2"><i class="fa-regular fa-file-code text-blue-400"></i> main.cpp</span>
-                    <div id="solution-toggle-container" class="hidden">
-                        <button onclick="toggleAnswer()" id="answer-btn" class="text-xs px-2.5 py-1 bg-amber-600/30 text-amber-300 border border-amber-500/50 rounded hover:bg-amber-600/50">
-                            💡 查看參考解答
-                        </button>
-                    </div>
-                </div>
-                <textarea id="code-editor" class="flex-1 bg-slate-900 text-slate-100 p-4 font-mono text-sm rounded border border-slate-800 focus:outline-none focus:border-slate-600 resize-none leading-6" spellcheck="false"></textarea>
-            </div>
+    try {
+        let code = "";
+        const textarea = document.getElementById('code-editor') || 
+                         document.getElementById('codeEditor') || 
+                         document.getElementById('code');
+        
+        if (typeof editor !== 'undefined' && typeof editor.getValue === 'function') {
+            code = editor.getValue();
+        } else if (textarea) {
+            code = textarea.value;
+        } else {
+            throw new Error("找不到程式碼編輯器元件！");
+        }
 
-            <!-- 模擬終端機 Console Output -->
-            <div class="h-56 bg-slate-950 p-4 flex flex-col border-t border-slate-800">
-                <div class="text-xs text-slate-400 mb-2 flex justify-between items-center">
-                    <span class="font-mono"><i class="fa-solid fa-terminal text-emerald-400"></i> 執行 Console 輸出結果</span>
-                    <button onclick="clearConsole()" class="text-xs text-slate-500 hover:text-slate-300">清空 Console</button>
-                </div>
-                
-                <div id="console-output" class="flex-1 font-mono text-xs overflow-y-auto text-emerald-400 bg-slate-900/90 p-3 rounded border border-slate-800/80 space-y-1">
-                    點擊右上角「執行程式」測試程式碼！
-                </div>
+        // 💡 關鍵修復：按照 Judge0 官方強制要求，將程式碼轉為 Base64 (支援中文與特殊字元)
+        const encodedCode = btoa(unescape(encodeURIComponent(code)));
+        const cacheBuster = Date.now();
+        const url = `https://ce.judge0.com/submissions?wait=true&base64_encoded=true&_cb=${cacheBuster}`;
 
-                <!-- 動態 CIN 輸入框 -->
-                <div id="cin-prompt-container" class="hidden mt-2 flex items-center gap-2 bg-slate-900 p-2 rounded border border-amber-500/50">
-                    <span class="text-xs text-amber-400 font-mono font-bold">▶ 請輸入值 (cin):</span>
-                    <input type="text" id="cin-input" class="flex-1 bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs text-amber-200 focus:outline-none focus:border-amber-400 font-mono" onkeydown="handleCinSubmit(event)">
-                    <button onclick="submitCinValue()" class="px-3 py-1 bg-amber-600 hover:bg-amber-500 text-white text-xs rounded font-medium">送出</button>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- 腳本邏輯處理 -->
-    <script>
-        // 四個教學單元的完整資料
-        const lessons = [
-            {
-                title: "第一課：cout 輸出與 cin 輸入",
-                content: `
-                    <h2 class="text-lg font-bold text-white mb-2">1. C++ 標準輸出與輸入</h2>
-                    <p>在 C++ 中，輸出資料使用 <code class="text-blue-300 font-mono">cout</code>，讀取輸入使用 <code class="text-amber-300 font-mono">cin</code>，兩者都包含在 <code class="text-emerald-300 font-mono">&lt;iostream&gt;</code> 標頭檔中。</p>
-                    
-                    <h3 class="text-sm font-semibold text-blue-400 mt-3 mb-1">1.1 cout 串接與換行</h3>
-                    <p class="text-xs">使用 <code class="text-blue-300 font-mono">&lt;&lt;</code> 運算子可以把字串、變數串接輸出：</p>
-                    <ul class="list-disc list-inside text-xs space-y-1 my-2">
-                        <li><code class="text-blue-300 font-mono">endl</code>：換行並更新輸出流。</li>
-                        <li><code class="text-blue-300 font-mono">"\\n"</code>：純換行符號（效率較高）。</li>
-                        <li><code class="text-blue-300 font-mono">"\\t"</code>：Tab 縮排符號。</li>
-                    </ul>
-
-                    <h3 class="text-sm font-semibold text-amber-400 mt-3 mb-1">1.2 cin 輸入機制</h3>
-                    <p class="text-xs">使用 <code class="text-amber-300 font-mono">&gt;&gt;</code> 把使用者輸入的資料寫入變數中。<code class="text-amber-300 font-mono">cin</code> 會自動跳過空白與換行。</p>
-                `,
-                defaultCode: `#include <iostream>
-#include <string>
-using namespace std;
-
-int main() {
-    // 1. 基本輸出測試
-    cout << "歡迎來到 C++ 互動學習平台！" << endl;
-    cout << "欄位A\\t欄位B\\t欄位C" << endl;
-
-    // 2. 基本輸入測試
-    string name;
-    cout << "請輸入你的姓名：";
-    cin >> name;
-
-    cout << "你好，" << name << "！祝你 C++ 學習順利！" << endl;
-    return 0;
-}`,
-                hasSolution: false
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json' 
             },
-            {
-                title: "第二課：變數宣告與資料型別",
-                content: `
-                    <h2 class="text-lg font-bold text-white mb-2">2. 變數與資料型別</h2>
-                    <p>變數是用來儲存資料的記憶體空間。宣告時必須指定「型別」與「名稱」。</p>
+            body: JSON.stringify({
+                source_code: encodedCode,
+                language_id: 54, // C++ (GCC 9.2.0)
+                stdin: window.currentStdin || ""
+            })
+        });
 
-                    <h3 class="text-sm font-semibold text-emerald-400 mt-3 mb-1">2.1 常見基本型別</h3>
-                    <ul class="list-disc list-inside text-xs space-y-1 my-2 font-mono">
-                        <li><span class="text-emerald-400">int</span> : 整數 (例: 25, -10)</li>
-                        <li><span class="text-emerald-400">double</span> : 浮點小數 (例: 3.14159)</li>
-                        <li><span class="text-emerald-400">char</span> : 字元，用單引號 (例: 'A')</li>
-                        <li><span class="text-emerald-400">bool</span> : 布林值 (true / false)</li>
-                        <li><span class="text-emerald-400">string</span> : 字串，用雙引號 (需 #include &lt;string&gt;)</li>
-                    </ul>
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`API 錯誤 (HTTP ${response.status}): ${errorText}`);
+        }
 
-                    <h3 class="text-sm font-semibold text-rose-400 mt-3 mb-1">2.2 變數命名鐵則</h3>
-                    <ol class="list-decimal list-inside text-xs space-y-1">
-                        <li>開頭必須是英文字母或底線 <code class="text-slate-300 font-mono">_</code>，<strong>不能是數字</strong>。</li>
-                        <li>大小寫視為完全不同變數（<code class="text-amber-300 font-mono">Age</code> ≠ <code class="text-amber-300 font-mono">age</code>）。</li>
-                        <li>不能使用關鍵字（如 <code class="text-rose-400 font-mono">int, double, return</code>）。</li>
-                    </ol>
-                `,
-                defaultCode: `#include <iostream>
-#include <string>
-using namespace std;
+        const result = await response.json();
 
-int main() {
-    // 宣告不同型別變數
-    int age = 18;
-    double height = 175.5;
-    char grade = 'A';
-    bool isPassed = true;
-    string name = "小明";
-
-    cout << "=== 學生資料紀錄 ===" << endl;
-    cout << "姓名：" << name << endl;
-    cout << "年齡：" << age << " 歲" << endl;
-    cout << "身高：" << height << " cm" << endl;
-    cout << "成績等級：" << grade << endl;
-    cout << "是否及格：" << isPassed << endl;
-
-    return 0;
-}`,
-                hasSolution: false
-            },
-            {
-                title: "第三課：算術運算子與取餘數",
-                content: `
-                    <h2 class="text-lg font-bold text-white mb-2">3. 算術運算子</h2>
-                    <p>C++ 支持基礎數學運算，但要注意**整數除法**的陷阱！</p>
-
-                    <h3 class="text-sm font-semibold text-blue-400 mt-3 mb-1">3.1 運算子列表</h3>
-                    <ul class="list-disc list-inside text-xs space-y-1 my-2">
-                        <li><code class="text-amber-300 font-mono">+ - * /</code> ：加、減、乘、除。</li>
-                        <li><code class="text-rose-400 font-mono">/ (整數除法)</code>：整數相除小數會直接被捨去！例如 <code class="text-rose-400 font-mono">5 / 2</code> 結果為 <code class="text-rose-400 font-mono">2</code>。</li>
-                        <li><code class="text-emerald-400 font-mono">% (取餘數)</code>：計算整數相除後的餘數。例如 <code class="text-emerald-400 font-mono">7 % 3</code> 結果為 <code class="text-emerald-400 font-mono">1</code>。</li>
-                    </ul>
-
-                    <h3 class="text-sm font-semibold text-amber-400 mt-3 mb-1">3.2 複合賦值與遞增</h3>
-                    <p class="text-xs"><code class="text-blue-300 font-mono">a += 5;</code> (等同 <code class="text-blue-300 font-mono">a = a + 5;</code>)<br><code class="text-blue-300 font-mono">count++;</code> (等同 <code class="text-blue-300 font-mono">count = count + 1;</code>)</p>
-                `,
-                defaultCode: `#include <iostream>
-using namespace std;
-
-int main() {
-    int a = 10, b = 3;
-
-    cout << "10 + 3 = " << a + b << endl;
-    cout << "10 - 3 = " << a - b << endl;
-    cout << "10 * 3 = " << a * b << endl;
-    cout << "10 / 3 (整數除法) = " << a / b << endl; 
-    cout << "10 % 3 (取餘數) = " << a % b << endl;
-
-    // 精確小數除法
-    double precisionResult = 10.0 / 3.0;
-    cout << "10.0 / 3.0 (浮點除法) = " << precisionResult << endl;
-
-    return 0;
-}`,
-                hasSolution: false
-            },
-            {
-                title: "第四課：綜合實戰 - 超商找零計算器",
-                content: `
-                    <h2 class="text-lg font-bold text-white mb-2">🎯 綜合練習題：找零計算器</h2>
-                    <p class="text-xs leading-relaxed">請編寫一個系統，輸入商品單價、數量與顧客支付金額，計算並印出：</p>
-                    <ol class="list-decimal list-inside text-xs space-y-1 my-2">
-                        <li>總金額與應找零金額。</li>
-                        <li>使用 <code class="text-amber-300 font-mono">/</code> 與 <code class="text-amber-300 font-mono">%</code> 換算應找回幾張 <strong>100元鈔票</strong>、幾個 <strong>10元硬幣</strong> 與 <strong>1元硬幣</strong>。</li>
-                    </ol>
-                    <div class="p-2 bg-slate-700/60 rounded text-xs text-amber-300 border border-slate-600 mt-3">
-                        💡 點擊編輯器右上角按鈕可切換顯示「參考解答」。
-                    </div>
-                `,
-                defaultCode: `#include <iostream>
-using namespace std;
-
-int main() {
-    int price, count, pay;
-
-    cout << "請輸入商品單價：";
-    cin >> price;
-    cout << "請輸入購買數量：";
-    cin >> count;
-    cout << "請輸入付款金額：";
-    cin >> pay;
-
-    int total = price * count;
-    int change = pay - total;
-
-    // ✏️ 請在下方實作找零邏輯（計算 100元、10元、1元 數量）
-    int hundred = 0; // 修改這裡
-    int ten = 0;     // 修改這裡
-    int one = 0;     // 修改這裡
-
-    cout << "\n=== 結帳單 ===" << endl;
-    cout << "總金額：" << total << " 元" << endl;
-    cout << "應找零：" << change << " 元" << endl;
-    cout << "100元張數：" << hundred << " 張" << endl;
-    cout << "10元硬幣：" << ten << " 個" << endl;
-    cout << "1元硬幣：" << one << " 個" << endl;
-
-    return 0;
-}`,
-                solutionCode: `#include <iostream>
-using namespace std;
-
-int main() {
-    int price, count, pay;
-
-    cout << "請輸入商品單價：";
-    cin >> price;
-    cout << "請輸入購買數量：";
-    cin >> count;
-    cout << "請輸入付款金額：";
-    cin >> pay;
-
-    int total = price * count;
-    int change = pay - total;
-
-    // 找零邏輯計算
-    int hundred = change / 100;
-    int remainder = change % 100;
-    int ten = remainder / 10;
-    int one = remainder % 10;
-
-    cout << "\n=== 結帳單 ===" << endl;
-    cout << "總金額：" << total << " 元" << endl;
-    cout << "應找零：" << change << " 元" << endl;
-    cout << "100元張數：" << hundred << " 張" << endl;
-    cout << "10元硬幣：" << ten << " 個" << endl;
-    cout << "1元硬幣：" << one << " 個" << endl;
-
-    return 0;
-}`,
-                hasSolution: true
+        // 由於我們請求時指定 base64_encoded=true，API 回傳的 stdout 與 compile_output 會是 Base64 格式，需要解碼回來
+        const decodeBase64 = (base64Str) => {
+            if (!base64Str) return "";
+            try {
+                return decodeURIComponent(escape(atob(base64Str)));
+            } catch (e) {
+                return atob(base64Str); // 備用解碼
             }
-        ];
-
-        let currentLessonIndex = 0;
-        let showingSolution = false;
-        let inputQueue = [];
-
-        // 初始化頁面
-        window.onload = () => {
-            switchLesson(0);
         };
 
-        // 切換單元邏輯
-        function switchLesson(index) {
-            currentLessonIndex = index;
-            showingSolution = false;
-            
-            // 更新 UI 狀態
-            document.getElementById('current-lesson-title').innerText = lessons[index].title;
-            document.getElementById('tutorial-content').innerHTML = lessons[index].content;
-            document.getElementById('code-editor').value = lessons[index].defaultCode;
+        const compileOutput = decodeBase64(result.compile_output);
+        const stdout = decodeBase64(result.stdout);
+        const stderr = decodeBase64(result.stderr);
 
-            // 切換按鈕 active 樣式
-            document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
-                if (idx === index) {
-                    btn.className = "tab-btn active p-2 text-xs font-medium rounded border border-blue-500 bg-blue-600/30 text-blue-200 transition text-left";
-                } else {
-                    btn.className = "tab-btn p-2 text-xs font-medium rounded border border-slate-700 bg-slate-800 text-slate-400 hover:bg-slate-700 transition text-left";
-                }
-            });
+        // 1. 檢查編譯失敗 (status.id === 6 代表 Compilation Error)
+        if (result.status && result.status.id === 6) {
+            consoleBox.innerHTML += `<br><span style="color: #f87171; font-weight: bold;">❌ [編譯失敗 Compile Error]</span><br>`;
+            consoleBox.innerHTML += `<pre style="color: #fca5a5; background: #2d1618; padding: 10px; border-radius: 6px; white-space: pre-wrap; margin-top: 5px;">${escapeHtml(compileOutput || '語法錯誤')}</pre>`;
+            return;
+        }
 
-            // 控制前後按鈕狀態
-            document.getElementById('prev-btn').disabled = (index === 0);
-            document.getElementById('next-btn').disabled = (index === lessons.length - 1);
-
-            // 控制解答按鈕顯示
-            const solutionContainer = document.getElementById('solution-toggle-container');
-            if (lessons[index].hasSolution) {
-                solutionContainer.classList.remove('hidden');
-                document.getElementById('answer-btn').innerText = "💡 查看參考解答";
-            } else {
-                solutionContainer.classList.add('hidden');
+        // 2. 檢查執行期錯誤
+        if (result.status && result.status.id >= 7) {
+            consoleBox.innerHTML += `<br><span style="color: #f87171; font-weight: bold;">❌ [執行期錯誤: ${result.status.description}]</span><br>`;
+            if (stderr) {
+                consoleBox.innerHTML += `<pre style="color: #fca5a5; background: #2d1618; padding: 10px; white-space: pre-wrap; margin-top: 5px;">${escapeHtml(stderr)}</pre>`;
             }
-
-            clearConsole();
+            return;
         }
 
-        function prevLesson() {
-            if (currentLessonIndex > 0) switchLesson(currentLessonIndex - 1);
+        // 3. 成功執行
+        consoleBox.innerHTML += `<br><span style="color: #4ade80; font-weight: bold;">[系統] 程式執行成功 (Exit Code 0)</span><br><br>`;
+        if (stdout) {
+            consoleBox.innerHTML += `<pre style="color: #fbbf24; font-size: 15px; font-weight: bold; white-space: pre-wrap; margin-top: 5px;">${escapeHtml(stdout)}</pre>`;
+        } else {
+            consoleBox.innerHTML += `<span style="color: #94a3b8;">(程式無任何輸出)</span><br>`;
         }
 
-        function nextLesson() {
-            if (currentLessonIndex < lessons.length - 1) switchLesson(currentLessonIndex + 1);
-        }
+    } catch (err) {
+        consoleBox.innerHTML += `<br><span style="color: #f87171; font-weight: bold;">❌ [例外錯誤]:</span><br>`;
+        consoleBox.innerHTML += `<pre style="color: #fca5a5; margin-top: 5px;">${escapeHtml(err.message)}</pre>`;
+        console.error("執行崩潰錯誤詳情：", err);
+    }
+}
 
-        function resetCode() {
-            document.getElementById('code-editor').value = lessons[currentLessonIndex].defaultCode;
-            showingSolution = false;
-            if (lessons[currentLessonIndex].hasSolution) {
-                document.getElementById('answer-btn').innerText = "💡 查看參考解答";
-            }
-        }
-
-        function toggleAnswer() {
-            const lesson = lessons[currentLessonIndex];
-            if (!lesson.hasSolution) return;
-
-            if (showingSolution) {
-                document.getElementById('code-editor').value = lesson.defaultCode;
-                document.getElementById('answer-btn').innerText = "💡 查看參考解答";
-                showingSolution = false;
-            } else {
-                document.getElementById('code-editor').value = lesson.solutionCode;
-                document.getElementById('answer-btn').innerText = "🔄 切換回題目模板";
-                showingSolution = true;
-            }
-        }
-
-        function clearConsole() {
-            document.getElementById('console-output').innerHTML = '<span class="text-slate-500">// 終端機已清空</span>';
-            document.getElementById('cin-prompt-container').classList.add('hidden');
-        }
-
-        // 前端模擬 C++ 執行與 cin/cout 解析器 (簡易模擬)
-        function runCode() {
-            const code = document.getElementById('code-editor').value;
-            const consoleBox = document.getElementById('console-output');
-            consoleBox.innerHTML = ''; // 清空 console
-
-            // 檢查代碼中包含多少 cin 請求
-            const cinMatches = code.match(/cin\s*>>\s*([a-zA-Z0-9_]+)/g);
-            inputQueue = [];
-
-            if (cinMatches && cinMatches.length > 0) {
-                // 需要輸入
-                promptForInputs(cinMatches, code);
-            } else {
-                // 純輸出執行
-                executeMockCode(code, []);
-            }
-        }
-
-        function promptForInputs(cinMatches, code) {
-            const promptContainer = document.getElementById('cin-prompt-container');
-            promptContainer.classList.remove('hidden');
-            document.getElementById('cin-input').focus();
-            
-            // 簡化版的互動：跳出輸入框接收數值
-            window.currentCodeToExec = code;
-            window.neededInputsCount = cinMatches.length;
-            window.collectedInputs = [];
-            
-            const consoleBox = document.getElementById('console-output');
-            consoleBox.innerHTML += `<div class="text-amber-400">[系統] 檢測到程式需要 ${cinMatches.length} 個輸入值，請在下方輸入框依序填入：</div>`;
-        }
-
-        function handleCinSubmit(e) {
-            if (e.key === 'Enter') submitCinValue();
-        }
-
-        function submitCinValue() {
-            const inputEl = document.getElementById('cin-input');
-            const val = inputEl.value.trim();
-            if (!val) return;
-
-            window.collectedInputs.push(val);
-            document.getElementById('console-output').innerHTML += `<div class="text-amber-300">輸入值: ${val}</div>`;
-            inputEl.value = '';
-
-            if (window.collectedInputs.length >= window.neededInputsCount) {
-                document.getElementById('cin-prompt-container').classList.add('hidden');
-                executeMockCode(window.currentCodeToExec, window.collectedInputs);
-            }
-        }
-
-        function executeMockCode(code, inputs) {
-            const consoleBox = document.getElementById('console-output');
-            consoleBox.innerHTML += `<div class="text-slate-400">// === 開始執行 ===</div>`;
-
-            let inputIdx = 0;
-            let variables = {};
-
-            // 模擬解譯 cout 與計算 (標準簡易預覽機制)
-            const lines = code.split('\n');
-            lines.forEach(line => {
-                line = line.trim();
-                
-                // 模擬抓取變數與運算 (簡單語法剖析)
-                if (line.startsWith('int ') || line.startsWith('double ') || line.startsWith('string ')) {
-                    let parts = line.replace('int ', '').replace('double ', '').replace('string ', '').replace(';', '').split('=');
-                    if (parts.length === 2) {
-                        let vName = parts[0].trim();
-                        let vVal = parts[1].trim().replace(/"/g, '');
-                        variables[vName] = isNaN(vVal) ? vVal : Number(vVal);
-                    }
-                }
-
-                // 模擬 cout 輸出
-                if (line.startsWith('cout')) {
-                    let content = line.replace('cout', '').replace(';', '').trim();
-                    let outputParts = content.split('<<');
-                    let lineOutput = '';
-
-                    outputParts.forEach(p => {
-                        p = p.trim();
-                        if (!p) return;
-                        if (p === 'endl' || p === '"\\n"') {
-                            lineOutput += '<br>';
-                        } else if (p.startsWith('"') && p.endsWith('"')) {
-                            lineOutput += p.substring(1, p.length - 1).replace(/\\n/g, '<br>').replace(/\\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
-                        } else if (variables.hasOwnProperty(p)) {
-                            lineOutput += variables[p];
-                        }
-                    });
-
-                    if (lineOutput) {
-                        consoleBox.innerHTML += `<div>${lineOutput}</div>`;
-                    }
-                }
-            });
-
-            consoleBox.innerHTML += `<div class="text-slate-500">// === 程式執行完畢 (Process exited with code 0) ===</div>`;
-            consoleBox.scrollTop = consoleBox.scrollHeight;
-        }
-    </script>
-</body>
-</html>
+function escapeHtml(text) {
+    if (!text) return "";
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+// HTML 字元跳脫函式
+function escapeHtml(text) {
+    if (!text) return "";
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
