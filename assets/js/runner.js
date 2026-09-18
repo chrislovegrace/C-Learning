@@ -59,26 +59,29 @@ function submitCinValue() {
 
 async function runCode() {
     const consoleBox = document.getElementById('console');
+    if (!consoleBox) return;
+    
     consoleBox.innerHTML = '<span style="color: #60a5fa;">[系統] 正在準備發送程式碼...</span><br>';
 
     try {
-        // 1. 安全取得編輯器內容（兼容 textarea 或進階編輯器）
+        // 1. 安全取得編輯器內容（同時支援 textarea 或全域 editor 變數）
         let code = "";
         const textarea = document.getElementById('codeEditor');
-        if (typeof editor !== 'undefined' && editor.getValue) {
+        
+        if (typeof editor !== 'undefined' && typeof editor.getValue === 'function') {
             code = editor.getValue();
         } else if (textarea) {
             code = textarea.value;
         } else {
-            throw new Error("找不到任何程式碼編輯器元件！");
+            throw new Error("找不到任何程式碼編輯器元件（#codeEditor 或 editor）！");
         }
 
-        // 加上破壞快取的隨機註解
+        // 加上破壞快取的隨機註解，逼迫 Judge0 重新編譯
         code += `\n// _no_cache_${Date.now()} \n`;
 
-        consoleBox.innerHTML += '<span style="color: #60a5fa;">[系統] 正在連接 Judge0 API 雲端沙盒...</span><br>';
+        consoleBox.innerHTML += '<span style="color: #60a5fa;">[系統] 正在傳送至 Judge0 雲端 GCC 編譯器...</span><br>';
 
-        // 2. 發送 API 請求
+        // 2. 發送 API 請求（加上 base64_encoded=false 確保回傳純文字）
         const response = await fetch('https://ce.judge0.com/submissions?wait=true&base64_encoded=false', {
             method: 'POST',
             headers: { 
@@ -92,11 +95,10 @@ async function runCode() {
         });
 
         if (!response.ok) {
-            throw new Error(`API 回傳伺服器錯誤狀態碼: ${response.status}`);
+            throw new Error(`API 伺服器錯誤狀態碼: ${response.status}`);
         }
 
         const result = await response.json();
-        console.log("Judge0 API 回傳結果：", result); // 打開瀏覽器 F12 可以看到完整物件
 
         // 3. 檢查編譯失敗 (status.id === 6 代表 Compilation Error)
         if (result.status && result.status.id === 6) {
@@ -129,7 +131,7 @@ async function runCode() {
     }
 }
 
-// 確保 escapeHtml 函式存在
+// HTML 字元跳脫函式
 function escapeHtml(text) {
     if (!text) return "";
     return text
