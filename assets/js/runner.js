@@ -59,63 +59,60 @@ function submitCinValue() {
 
 // 核心執行函式：對接 Judge0 雲端沙盒
 async function runCode() {
-    clearConsole();
-    const codeEditor = document.getElementById('code-editor');
-    if (!codeEditor) return false;
+    const code = editor.getValue ? editor.getValue() : document.getElementById('codeEditor').value;
+    const consoleBox = document.getElementById('console');
     
-    const code = codeEditor.value;
-    let stdinData = "";
-
-    if (code.includes("cin >>") || code.includes("getline")) {
-        appendConsole('<span class="text-amber-400 mb-2 block">💡 [系統] 程式碼包含 cin 輸入，請在輸入框提供資料並送出。</span>');
-        stdinData = await requestStdinUI();
-        if (stdinData === null) {
-            appendConsole('<span class="text-amber-400 mt-2 block">⚠️ [系統] 執行已取消。</span>');
-            return false;
-        }
-        stdinData += "\n";
-    }
-
-    appendConsole('<span class="text-blue-400 mb-2 block">[系統] 正在將程式碼傳送至 Judge0 雲端沙盒...</span>');
+    consoleBox.innerHTML = '<span style="color: #60a5fa;">[系統] 正在將程式碼傳送至 GCC 編譯器...</span><br>';
 
     try {
-        const response = await fetch("https://ce.judge0.com/submissions?wait=true", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+        // 發送請求給 Judge0 API
+        const response = await fetch('https://ce.judge0.com/submissions?wait=true', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 source_code: code,
                 language_id: 54, // C++ (GCC 9.2.0)
-                stdin: stdinData
+                stdin: window.currentStdin || ""
             })
         });
 
         const result = await response.json();
 
-        if (result.compile_output) {
-            appendConsole('<span class="text-red-400 font-bold block mt-2">❌ [GCC 編譯失敗] 語法錯誤：</span>');
-            result.compile_output.split('\n').forEach(line => {
-                if (line.trim()) appendConsole(`<span class="text-red-300 ml-2 block">${escapeHtml(line)}</span>`);
-            });
-            return false;
+        // 1. 檢查是否編譯失敗 (Compilation Error, status.id === 6)
+        if (result.status && result.status.id === 6) {
+            consoleBox.innerHTML += `<br><span style="color: #f87171; font-weight: bold;">❌ [編譯失敗 Compile Error]</span><br>`;
+            consoleBox.innerHTML += `<pre style="color: #fca5a5; background: #2d1618; padding: 10px; border-radius: 6px;">${escapeHtml(result.compile_output || '語法錯誤')}</pre>`;
+            return;
         }
 
-        if (result.stderr) {
-            appendConsole(`<span class="text-red-400 font-bold block mt-2">❌ [Runtime Error]</span>`);
-            appendConsole(`<span class="text-red-300 ml-2 block">${escapeHtml(result.stderr)}</span>`);
-            return false;
+        // 2. 檢查是否執行階段錯誤 (Runtime Error)
+        if (result.status && result.status.id >= 7) {
+            consoleBox.innerHTML += `<br><span style="color: #f87171; font-weight: bold;">❌ [執行期錯誤 Runtime Error: ${result.status.description}]</span><br>`;
+            if (result.stderr) {
+                consoleBox.innerHTML += `<pre style="color: #fca5a5; background: #2d1618; padding: 10px; border-radius: 6px;">${escapeHtml(result.stderr)}</pre>`;
+            }
+            return;
         }
 
-        if (result.stdout !== undefined && result.stdout !== null) {
-            result.stdout.split('\n').forEach(line => {
-                if (line !== "") appendConsole(`<span class="text-slate-300 block">${escapeHtml(line).replace(/ /g, '&nbsp;')}</span>`);
-            });
+        // 3. 正常執行成功
+        consoleBox.innerHTML += `<br><span style="color: #4ade80; font-weight: bold;">✅ [程式執行成功]</span><br>`;
+        if (result.stdout) {
+            consoleBox.innerHTML += `<pre style="color: #e2e8f0;">${escapeHtml(result.stdout)}</pre>`;
+        } else {
+            consoleBox.innerHTML += `<span style="color: #94a3b8;">(程式無任何輸出)</span><br>`;
         }
-
-        appendConsole(`<br><span class="text-emerald-400 mt-2 block">[系統] 程式執行成功 (Exit Code 0)</span>`);
-        return true;
 
     } catch (err) {
-        appendConsole('<span class="text-red-400 mb-2 block">❌ [連線失敗] 無法連接至雲端編譯 API。</span>');
-        return false;
+        consoleBox.innerHTML += `<br><span style="color: #f87171;">❌ [網路或 API 呼叫失敗]: ${err.message}</span>`;
     }
+}
+
+// 轉義 HTML 避免預覽區被特殊字串破壞
+function escapeHtml(text) {
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
