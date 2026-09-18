@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第一課：Hello World 基礎 - C++ 互動學習</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- 頂部導覽列 Navigation -->
+    <header class="bg-slate-800 px-6 py-3 flex items-center justify-between border-b border-slate-700">
+        <div class="flex items-center space-x-4">
+            <a href="../index.html" class="text-blue-400 hover:text-blue-300 flex items-center gap-2 font-bold">
+                <i class="fa-solid fa-house"></i> 回課程首頁
+            </a>
+            <span class="text-slate-600">|</span>
+            <span class="text-white font-semibold">第一課：Hello World 基礎</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="runCode()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-sm rounded-md shadow transition flex items-center gap-2">
+                <i class="fa-solid fa-play"></i> 執行程式
+            </button>
+        </div>
+    </header>
+
+    <!-- 主要區域 -->
+    <div class="flex-1 flex flex-col lg:flex-row">
+        <!-- 左側：教學內容說明 -->
+        <aside class="w-full lg:w-96 bg-slate-800/60 p-6 border-r border-slate-700 space-y-4 overflow-y-auto">
+            <h2 class="text-xl font-bold text-white">1. 第一支 C++ 與 cout 輸出</h2>
+            <p class="text-sm text-slate-300 leading-relaxed">
+                在 C++ 中，我們使用 <code class="text-blue-300">cout</code> 配合 <code class="text-amber-300">&lt;&lt;</code> 把資料輸出到螢幕。
+            </p>
+            
+            <!-- 章節切換導覽按鈕 -->
+            <div class="pt-6 border-t border-slate-700 flex justify-between">
+                <span class="text-slate-500 text-sm">第一課</span>
+                <a href="lesson2.html" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded text-xs font-semibold">
+                    下一課：變數宣告 <i class="fa-solid fa-arrow-right ml-1"></i>
+                </a>
+            </div>
+        </aside>
+
+        <!-- 右側：編輯器與終端機 -->
+        <main class="flex-1 flex flex-col bg-slate-950">
+            <!-- 程式碼編輯器 -->
+            <div class="flex-1 p-4 border-b border-slate-800 flex flex-col">
+                <div class="text-xs text-slate-400 mb-2 flex justify-between">
+                    <span>main.cpp</span>
+                </div>
+                <textarea id="code-editor" class="flex-1 bg-slate-900 text-slate-100 p-4 font-mono text-sm rounded focus:outline-none resize-none">
+#include <iostream>
+using namespace std;
+
+int main() {
+    cout << "Hello World!" << endl;
+    return 0;
+}</textarea>
+            </div>
+
+            <!-- 終端機 Console Output -->
+            <div class="h-48 bg-slate-950 p-4 flex flex-col">
+                <div class="text-xs text-slate-400 mb-2">執行終端機 (Console)</div>
+                <div id="console-output" class="flex-1 font-mono text-sm overflow-y-auto text-slate-300"></div>
+                
+                <!-- Input Bar (Dynamically shown during cin) -->
+                <div id="cin-prompt-container" class="hidden mt-2 flex items-center gap-2">
+                    <input type="text" id="cin-input" class="flex-1 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-sm text-amber-200" onkeydown="handleCinSubmit(event)">
+                    <button onclick="submitCinValue()" class="px-3 py-1 bg-amber-600 text-white text-xs rounded">送出</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 引用共享的 C++ 執行引擎腳本 -->
+    <script src="../assets/js/runner.js"></script>
+</body>
+</html>
