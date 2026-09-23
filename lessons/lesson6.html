@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第六課：條件判斷式 (if / else) - C++ 學習教室</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome 圖示 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
+
+    <!-- 頂部導覽列 -->
+    <header class="bg-slate-800 px-6 py-3 flex items-center justify-between border-b border-slate-700 shadow-md">
+        <div class="flex items-center space-x-4">
+            <span class="text-blue-400 font-bold flex items-center gap-2 text-lg">
+                <i class="fa-solid fa-code"></i> C++ 程式設計入門
+            </span>
+            <span class="text-slate-600">|</span>
+            <span class="text-white font-semibold">第六課：條件判斷式 (if / else)</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="resetCode()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium rounded transition flex items-center gap-1">
+                <i class="fa-solid fa-rotate-left"></i> 重置程式碼
+            </button>
+            <button onclick="handleStartRun()" class="px-5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm rounded shadow transition flex items-center gap-2">
+                <i class="fa-solid fa-play"></i> 執行程式 (Run)
+            </button>
+        </div>
+    </header>
+
+    <!-- 主要內容區 -->
+    <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+        
+        <!-- 左側：詳細教學導覽 -->
+        <aside class="w-full lg:w-[480px] bg-slate-800/80 p-6 border-r border-slate-700 flex flex-col overflow-y-auto space-y-6">
+            
+            <div class="space-y-2">
+                <div class="inline-block bg-blue-500/20 text-blue-300 text-xs px-2.5 py-1 rounded-full font-semibold">
+                    Lesson 06
+                </div>
+                <h1 class="text-2xl font-bold text-white">流程控制：if, else if 與 else</h1>
+                <p class="text-slate-300 text-sm leading-relaxed">
+                    條件判斷讓程式具備「思考與決策」的能力。根據運算式的真偽（<code class="text-rose-400 font-mono">bool</code>：true / false），執行不同的程式碼區塊。
+                </p>
+            </div>
+
+            <!-- 觀念 1：關係與邏輯運算子 -->
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700/80 space-y-3">
+                <h2 class="text-sm font-bold text-amber-400 flex items-center gap-2">
+                    <i class="fa-solid fa-code-compare"></i> 1. 關係運算子與常見陷阱
+                </h2>
+                <div class="font-mono text-xs bg-slate-950 p-2.5 rounded border border-slate-800 text-slate-300 space-y-1">
+                    <div><span class="text-amber-300">==</span> (等於) | <span class="text-amber-300">!=</span> (不等於)</div>
+                    <div><span class="text-amber-300">&gt;</span> | <span class="text-amber-300">&lt;</span> | <span class="text-amber-300">&gt;=</span> | <span class="text-amber-300">&lt;=</span></div>
+                </div>
+                <div class="bg-rose-950/40 border border-rose-500/30 p-2.5 rounded text-[11px] text-slate-300">
+                    <strong class="text-rose-400">⚠️ 大坑警告：</strong><br>
+                    <code class="text-amber-300 font-mono">if (score = 60)</code> 是把 60 賦值給 score，條件永遠成立！判斷相等請一定要寫兩個等於：<code class="text-emerald-400 font-mono">if (score == 60)</code>。
+                </div>
+            </div>
+
+            <!-- 觀念 2：邏輯運算子與短路求值 -->
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700/80 space-y-2">
+                <h2 class="text-sm font-bold text-blue-400 flex items-center gap-2">
+                    <i class="fa-solid fa-network-wired"></i> 2. 複合條件與短路求值 (Short-Circuit)
+                </h2>
+                <ul class="list-disc list-inside text-xs text-slate-300 space-y-1 font-mono">
+                    <li><strong class="text-emerald-400">&& (AND)</strong>：兩邊皆為 true 才為 true</li>
+                    <li><strong class="text-emerald-400">|| (OR)</strong>：任一邊為 true 即為 true</li>
+                    <li><strong class="text-emerald-400">! (NOT)</strong>：反轉邏輯 (true 變 false)</li>
+                </ul>
+                <p class="text-[11px] text-slate-400 leading-relaxed">
+                    💡 <strong>短路求值：</strong>對於 <code class="font-mono">A && B</code>，若 A 為 false，C++ 將**完全不會計算 B**；對於 <code class="font-mono">A || B</code>，若 A 為 true，也將直接跳過 B。
+                </p>
+            </div>
+
+            <!-- 觀念 3：if-else 鏈的順序嚴謹度 -->
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700/80 space-y-2">
+                <h2 class="text-sm font-bold text-emerald-400 flex items-center gap-2">
+                    <i class="fa-solid fa-sitemap"></i> 3. 條件判斷鏈的互斥性
+                </h2>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    <code class="text-emerald-300 font-mono">if ... else if ... else</code> 具備上到下的**互斥執行**特性。一旦其中一個條件成立，後續的區塊將自動被跳過。
+                </p>
+            </div>
+
+            <!-- 實作練習關卡 -->
+            <div class="border-t border-slate-700 pt-4 space-y-3">
+                <h2 class="font-bold text-white text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-list-check text-emerald-400"></i> 本課實作練習：成績等級與評語判定
+                </h2>
+                <div class="bg-slate-900/90 p-3 rounded-lg border border-slate-700 text-xs space-y-2 text-slate-300">
+                    <p>讀取學生成績 score（0~100）：</p>
+                    <ul class="list-disc list-inside text-[11px] font-mono text-slate-200 space-y-0.5">
+                        <li>90~100 分 ➔ 印出 <span class="text-emerald-400">Grade: A (優秀)</span></li>
+                        <li>80~89 分 ➔ 印出 <span class="text-blue-400">Grade: B (良好)</span></li>
+                        <li>60~79 分 ➔ 印出 <span class="text-amber-400">Grade: C (及格)</span></li>
+                        <li>0~59 分 ➔ 印出 <span class="text-rose-400">Grade: F (不及格，需補考)</span></li>
+                        <li>其他數值 ➔ 印出 <span class="text-purple-400">錯誤：無效的分數範圍</span></li>
+                    </ul>
+                </div>
+
+                <button onclick="toggleAnswer()" id="answer-btn" class="w-full py-2.5 bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/40 rounded-lg text-xs transition font-semibold flex items-center justify-center gap-2">
+                    <i class="fa-regular fa-lightbulb"></i> 切換參考解答
+                </button>
+            </div>
+
+            <div class="mt-auto pt-4 text-xs text-slate-500 border-t border-slate-700/50 flex justify-between items-center">
+                <span>執行引擎：Judge0 Cloud GCC 9.2.0</span>
+                <span class="font-mono">C++17</span>
+            </div>
+        </aside>
+
+        <!-- 右側：編輯器與 Console -->
+        <main class="flex-1 flex flex-col bg-slate-950">
+            <div class="flex-1 p-4 border-b border-slate-800 flex flex-col min-h-[320px]">
+                <div class="text-xs text-slate-400 mb-2 flex justify-between items-center">
+                    <span class="font-mono flex items-center gap-2">
+                        <i class="fa-regular fa-file-code text-blue-400"></i> main.cpp
+                    </span>
+                </div>
+                <textarea id="code-editor" class="flex-1 bg-slate-900 text-slate-100 p-4 font-mono text-sm rounded-lg border border-slate-800 focus:outline-none focus:border-slate-600 resize-none leading-6 shadow-inner" spellcheck="false"></textarea>
+            </div>
+
+            <div class="p-3 bg-slate-900 border-b border-slate-800 flex items-center gap-3">
+                <label for="stdin-input" class="text-xs text-amber-400 font-mono font-bold whitespace-nowrap flex items-center gap-1.5">
+                    <i class="fa-solid fa-keyboard"></i> Stdin 輸入 (分數 score):
+                </label>
+                <input type="text" id="stdin-input" placeholder="請輸入 0 ~ 100 之間的分數（例：85）" 
+                       oninput="updateStdinValue(this.value)"
+                       class="flex-1 bg-slate-950 border border-slate-700 rounded px-3 py-1 text-xs text-amber-200 focus:outline-none focus:border-amber-400 font-mono">
+            </div>
+
+            <div class="h-64 bg-slate-950 p-4 flex flex-col relative">
+                <div class="text-xs text-slate-400 mb-2 flex justify-between items-center">
+                    <span class="font-mono flex items-center gap-2">
+                        <i class="fa-solid fa-terminal text-emerald-400"></i> Console 終端機輸出
+                    </span>
+                    <button onclick="clearConsole()" class="text-xs text-slate-500 hover:text-slate-300 transition">清空終端機</button>
+                </div>
+                
+                <div id="console-output" class="flex-1 font-mono text-xs overflow-y-auto bg-slate-900/90 p-3 rounded-lg border border-slate-800 space-y-1">
+                    <span class="text-slate-500">// 點擊「執行程式 (Run)」測試條件邏輯...</span>
+                </div>
+
+                <div id="cin-prompt-container" class="hidden absolute bottom-4 left-4 right-4 bg-slate-800/95 p-3 rounded-lg border border-amber-500/60 shadow-xl flex items-center gap-2 backdrop-blur">
+                    <span class="text-xs text-amber-400 font-mono font-bold whitespace-nowrap">▶ 輸入資料:</span>
+                    <input type="text" id="cin-input" onkeydown="handleCinSubmit(event)" class="flex-1 bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-xs text-amber-200 focus:outline-none focus:border-amber-400 font-mono">
+                    <button onclick="submitCinValue()" class="px-4 py-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded transition">送出</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../assets/js/runner.js"></script>
+    <script>
+        const defaultCode = `#include <iostream>
+using namespace std;
+
+int main() {
+    int score;
+    cin >> score;
+
+    // TODO: 使用 if - else if - else 判斷成績等級
+    // 注意先檢查邊界條件 (score < 0 或 score > 100)
+
+    if (score < 0 || score > 100) {
+        cout << "錯誤：無效的分數範圍" << endl;
+    } 
+    // 請補全 90~100, 80~89, 60~79, 0~59 的分支...
+
+    return 0;
+}`;
+
+        const solutionCode = `#include <iostream>
+using namespace std;
+
+int main() {
+    int score;
+    cin >> score;
+
+    // 嚴謹的輸入範圍檢查
+    if (score < 0 || score > 100) {
+        cout << "錯誤：無效的分數範圍" << endl;
+    } 
+    else if (score >= 90) {
+        cout << "Grade: A (優秀)" << endl;
+    } 
+    else if (score >= 80) {
+        cout << "Grade: B (良好)" << endl;
+    } 
+    else if (score >= 60) {
+        cout << "Grade: C (及格)" << endl;
+    } 
+    else {
+        cout << "Grade: F (不及格，需補考)" << endl;
+    }
+
+    return 0;
+}`;
+
+        let showingSolution = false;
+
+        window.onload = () => {
+            document.getElementById('code-editor').value = defaultCode;
+            document.getElementById('stdin-input').value = "85";
+            window.currentStdin = "85";
+        };
+
+        function updateStdinValue(val) {
+            window.currentStdin = val;
+        }
+
+        function handleStartRun() {
+            window.currentStdin = document.getElementById('stdin-input').value;
+            runCode();
+        }
+
+        function resetCode() {
+            document.getElementById('code-editor').value = defaultCode;
+            document.getElementById('stdin-input').value = "85";
+            window.currentStdin = "85";
+            showingSolution = false;
+            document.getElementById('answer-btn').innerHTML = `<i class="fa-regular fa-lightbulb"></i> 切換參考解答`;
+            clearConsole();
+        }
+
+        function toggleAnswer() {
+            if (showingSolution) {
+                document.getElementById('code-editor').value = defaultCode;
+                document.getElementById('answer-btn').innerHTML = `<i class="fa-regular fa-lightbulb"></i> 切換參考解答`;
+                showingSolution = false;
+            } else {
+                document.getElementById('code-editor').value = solutionCode;
+                document.getElementById('answer-btn').innerHTML = `<i class="fa-solid fa-rotate-left"></i> 切換回練習範本`;
+                showingSolution = true;
+            }
+        }
+    </script>
+</body>
+</html>
