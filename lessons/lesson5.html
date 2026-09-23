@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第五課：綜合名片實作 - C++ 學習教室</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome 圖示 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
+
+    <!-- 頂部導覽列 -->
+    <header class="bg-slate-800 px-6 py-3 flex items-center justify-between border-b border-slate-700 shadow-md">
+        <div class="flex items-center space-x-4">
+            <span class="text-blue-400 font-bold flex items-center gap-2 text-lg">
+                <i class="fa-solid fa-code"></i> C++ 程式設計入門
+            </span>
+            <span class="text-slate-600">|</span>
+            <span class="text-white font-semibold">第五課：綜合實作 - 創作者名片產生器</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="resetCode()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium rounded transition flex items-center gap-1">
+                <i class="fa-solid fa-rotate-left"></i> 重置程式碼
+            </button>
+            <button onclick="handleStartRun()" class="px-5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm rounded shadow transition flex items-center gap-2">
+                <i class="fa-solid fa-play"></i> 執行程式 (Run)
+            </button>
+        </div>
+    </header>
+
+    <!-- 主要內容區 -->
+    <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+        
+        <!-- 左側：教學說明與專案規格 -->
+        <aside class="w-full lg:w-[480px] bg-slate-800/80 p-6 border-r border-slate-700 flex flex-col overflow-y-auto space-y-6">
+            
+            <div class="space-y-2">
+                <div class="inline-block bg-purple-500/20 text-purple-300 text-xs px-2.5 py-1 rounded-full font-semibold">
+                    Lesson 05 - Mini Project
+                </div>
+                <h1 class="text-2xl font-bold text-white">創作者名片產生器</h1>
+                <p class="text-slate-300 text-sm leading-relaxed">
+                    本課為第一階段總結專案！你將整合 <code class="text-blue-300 font-mono">string</code>, <code class="text-blue-300 font-mono">int</code>, <code class="text-blue-300 font-mono">double</code>, <code class="text-amber-300 font-mono">cin</code> 與 <code class="text-amber-300 font-mono">cout</code>，打造一個自動計算與排版名片的程式。
+                </p>
+            </div>
+
+            <!-- 專案需求細節 -->
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700/80 space-y-3">
+                <h2 class="text-sm font-bold text-purple-400 flex items-center gap-2">
+                    <i class="fa-solid fa-address-card"></i> 專案規格說明
+                </h2>
+                <div class="text-xs text-slate-300 space-y-2 leading-relaxed">
+                    <p>程式需依序透過 Stdin 讀取 4 個關鍵欄位：</p>
+                    <ol class="list-decimal list-inside space-y-1 font-mono text-slate-200 bg-slate-950 p-2.5 rounded border border-slate-800">
+                        <li><span class="text-purple-300">string</span> creatorName - 創作者名稱</li>
+                        <li><span class="text-blue-300">int</span> subscriberCount - 訂閱人數</li>
+                        <li><span class="text-emerald-300">double</span> avgViews - 影片平均觀看數</li>
+                        <li><span class="text-amber-300">int</span> videoCount - 總上片數量</li>
+                    </ol>
+                    <p class="text-slate-400 pt-1">
+                        內部需自動計算出衍生指標：<br>
+                        <strong class="text-amber-300">頻道總總觀看數 = avgViews * videoCount</strong>
+                    </p>
+                </div>
+            </div>
+
+            <!-- 觀念點撥：格式化輸出技巧 -->
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700/80 space-y-2">
+                <h2 class="text-sm font-bold text-blue-400 flex items-center gap-2">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> ASCII 排版技巧
+                </h2>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    善用字元符號（如 <code class="text-slate-200 font-mono">=</code>、<code class="text-slate-200 font-mono">|</code>、<code class="text-slate-200 font-mono">*</code>）與換行 <code class="text-slate-200 font-mono">endl</code>，可以在 Console 機印出結構完美的卡片框線。
+                </p>
+            </div>
+
+            <div class="border-t border-slate-700 pt-4 space-y-3">
+                <h2 class="font-bold text-white text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-bullseye text-emerald-400"></i> 名片輸出樣式標竿：
+                </h2>
+                <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 text-[11px] font-mono text-slate-300 space-y-1 leading-normal">
+                    <div>======================================</div>
+                    <div>|      創 作者 個人 資料 卡片      |</div>
+                    <div>======================================</div>
+                    <div>  創作者: TechGuru</div>
+                    <div>  訂閱數: 125000 人</div>
+                    <div>  發片量: 48 部</div>
+                    <div>  預估總流量: 2.16e+06 次觀看</div>
+                    <div>======================================</div>
+                </div>
+
+                <button onclick="toggleAnswer()" id="answer-btn" class="w-full py-2.5 bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/40 rounded-lg text-xs transition font-semibold flex items-center justify-center gap-2">
+                    <i class="fa-regular fa-lightbulb"></i> 切換參考解答
+                </button>
+            </div>
+
+            <div class="mt-auto pt-4 text-xs text-slate-500 border-t border-slate-700/50 flex justify-between items-center">
+                <span>執行引擎：Judge0 Cloud GCC 9.2.0</span>
+                <span class="font-mono">C++17</span>
+            </div>
+        </aside>
+
+        <!-- 右側：編輯器與 Console -->
+        <main class="flex-1 flex flex-col bg-slate-950">
+            <div class="flex-1 p-4 border-b border-slate-800 flex flex-col min-h-[320px]">
+                <div class="text-xs text-slate-400 mb-2 flex justify-between items-center">
+                    <span class="font-mono flex items-center gap-2">
+                        <i class="fa-regular fa-file-code text-blue-400"></i> main.cpp
+                    </span>
+                </div>
+                <textarea id="code-editor" class="flex-1 bg-slate-900 text-slate-100 p-4 font-mono text-sm rounded-lg border border-slate-800 focus:outline-none focus:border-slate-600 resize-none leading-6 shadow-inner" spellcheck="false"></textarea>
+            </div>
+
+            <div class="p-3 bg-slate-900 border-b border-slate-800 flex items-center gap-3">
+                <label for="stdin-input" class="text-xs text-amber-400 font-mono font-bold whitespace-nowrap flex items-center gap-1.5">
+                    <i class="fa-solid fa-keyboard"></i> Stdin 輸入 (名稱 訂閱數 均觀數 發片量):
+                </label>
+                <input type="text" id="stdin-input" placeholder="例：TechGuru 125000 45000 48" 
+                       oninput="updateStdinValue(this.value)"
+                       class="flex-1 bg-slate-950 border border-slate-700 rounded px-3 py-1 text-xs text-amber-200 focus:outline-none focus:border-amber-400 font-mono">
+            </div>
+
+            <div class="h-64 bg-slate-950 p-4 flex flex-col relative">
+                <div class="text-xs text-slate-400 mb-2 flex justify-between items-center">
+                    <span class="font-mono flex items-center gap-2">
+                        <i class="fa-solid fa-terminal text-emerald-400"></i> Console 終端機輸出
+                    </span>
+                    <button onclick="clearConsole()" class="text-xs text-slate-500 hover:text-slate-300 transition">清空終端機</button>
+                </div>
+                
+                <div id="console-output" class="flex-1 font-mono text-xs overflow-y-auto bg-slate-900/90 p-3 rounded-lg border border-slate-800 space-y-1">
+                    <span class="text-slate-500">// 點擊「執行程式 (Run)」產生名片...</span>
+                </div>
+
+                <div id="cin-prompt-container" class="hidden absolute bottom-4 left-4 right-4 bg-slate-800/95 p-3 rounded-lg border border-amber-500/60 shadow-xl flex items-center gap-2 backdrop-blur">
+                    <span class="text-xs text-amber-400 font-mono font-bold whitespace-nowrap">▶ 輸入資料:</span>
+                    <input type="text" id="cin-input" onkeydown="handleCinSubmit(event)" class="flex-1 bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-xs text-amber-200 focus:outline-none focus:border-amber-400 font-mono">
+                    <button onclick="submitCinValue()" class="px-4 py-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded transition">送出</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../assets/js/runner.js"></script>
+    <script>
+        const defaultCode = `#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    string creatorName;
+    int subscriberCount;
+    double avgViews;
+    int videoCount;
+
+    // TODO 1: 讀取這 four 個變數資料 (提示：cin >> creatorName >> ...)
+    
+    // TODO 2: 計算總流量 totalViews (avgViews * videoCount)
+    double totalViews = 0;
+
+    // TODO 3: 排版印出名片
+    cout << "======================================" << endl;
+    cout << "|      創 作者 個人 資料 卡片      |" << endl;
+    cout << "======================================" << endl;
+    // 請繼續補全名片內文輸出...
+
+    return 0;
+}`;
+
+        const solutionCode = `#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    string creatorName;
+    int subscriberCount;
+    double avgViews;
+    int videoCount;
+
+    // 一次讀取多個參數
+    cin >> creatorName >> subscriberCount >> avgViews >> videoCount;
+
+    // 演算衍生資料
+    double totalViews = avgViews * videoCount;
+
+    // 美化名片輸出
+    cout << "======================================" << endl;
+    cout << "|      創 作者 個人 資料 卡片      |" << endl;
+    cout << "======================================" << endl;
+    cout << "  創作者: " << creatorName << endl;
+    cout << "  訂閱數: " << subscriberCount << " 人" << endl;
+    cout << "  發片量: " << videoCount << " 部" << endl;
+    cout << "  預估總流量: " << totalViews << " 次觀看" << endl;
+    cout << "======================================" << endl;
+
+    return 0;
+}`;
+
+        let showingSolution = false;
+
+        window.onload = () => {
+            document.getElementById('code-editor').value = defaultCode;
+            document.getElementById('stdin-input').value = "TechGuru 125000 45000 48";
+            window.currentStdin = "TechGuru 125000 45000 48";
+        };
+
+        function updateStdinValue(val) {
+            window.currentStdin = val;
+        }
+
+        function handleStartRun() {
+            window.currentStdin = document.getElementById('stdin-input').value;
+            runCode();
+        }
+
+        function resetCode() {
+            document.getElementById('code-editor').value = defaultCode;
+            document.getElementById('stdin-input').value = "TechGuru 125000 45000 48";
+            window.currentStdin = "TechGuru 125000 45000 48";
+            showingSolution = false;
+            document.getElementById('answer-btn').innerHTML = `<i class="fa-regular fa-lightbulb"></i> 切換參考解答`;
+            clearConsole();
+        }
+
+        function toggleAnswer() {
+            if (showingSolution) {
+                document.getElementById('code-editor').value = defaultCode;
+                document.getElementById('answer-btn').innerHTML = `<i class="fa-regular fa-lightbulb"></i> 切換參考解答`;
+                showingSolution = false;
+            } else {
+                document.getElementById('code-editor').value = solutionCode;
+                document.getElementById('answer-btn').innerHTML = `<i class="fa-solid fa-rotate-left"></i> 切換回練習範本`;
+                showingSolution = true;
+            }
+        }
+    </script>
+</body>
+</html>
