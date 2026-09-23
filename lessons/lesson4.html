@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第四課：cin 基礎互動輸入 - C++ 學習教室</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome 圖示 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
+
+    <!-- 頂部導覽列 -->
+    <header class="bg-slate-800 px-6 py-3 flex items-center justify-between border-b border-slate-700 shadow-md">
+        <div class="flex items-center space-x-4">
+            <span class="text-blue-400 font-bold flex items-center gap-2 text-lg">
+                <i class="fa-solid fa-code"></i> C++ 程式設計入門
+            </span>
+            <span class="text-slate-600">|</span>
+            <span class="text-white font-semibold">第四課：cin 基礎互動輸入</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="resetCode()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium rounded transition flex items-center gap-1">
+                <i class="fa-solid fa-rotate-left"></i> 重置程式碼
+            </button>
+            <button onclick="handleStartRun()" class="px-5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm rounded shadow transition flex items-center gap-2">
+                <i class="fa-solid fa-play"></i> 執行程式 (Run)
+            </button>
+        </div>
+    </header>
+
+    <!-- 主要內容區 -->
+    <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+        
+        <!-- 左側：詳細教學導覽 -->
+        <aside class="w-full lg:w-[480px] bg-slate-800/80 p-6 border-r border-slate-700 flex flex-col overflow-y-auto space-y-6">
+            
+            <div class="space-y-2">
+                <div class="inline-block bg-blue-500/20 text-blue-300 text-xs px-2.5 py-1 rounded-full font-semibold">
+                    Lesson 04
+                </div>
+                <h1 class="text-2xl font-bold text-white">cin 標準輸入流與輸入機制</h1>
+                <p class="text-slate-300 text-sm leading-relaxed">
+                    <code class="text-amber-300 bg-slate-900 px-1 py-0.5 rounded font-mono">cin</code>（Character Input）用來從標準輸入讀取資料。理解 <code class="text-amber-300 font-mono">cin</code> 的流向與緩衝區機制，是寫出穩定程式的關鍵。
+                </p>
+            </div>
+
+            <!-- 觀念 1：提取運算子與分隔符 -->
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700/80 space-y-3">
+                <h2 class="text-sm font-bold text-amber-400 flex items-center gap-2">
+                    <i class="fa-solid fa-right-to-bracket"></i> 1. 提取運算子 (&gt;&gt;) 與空白字元跳過機制
+                </h2>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    <code class="text-amber-300 font-mono">cin &gt;&gt; var;</code> 會從輸入緩衝區中讀取資料並塞入變數中。
+                </p>
+                <div class="bg-slate-950 p-3 rounded border border-slate-800 text-xs space-y-2 text-slate-300">
+                    <p><strong class="text-white">自動忽略前導空白：</strong><code class="font-mono">&gt;&gt;</code> 會自動跳過開頭的**空白、Tab、換行符 (\n)**。</p>
+                    <p><strong class="text-white">定界符（Delimiter）：</strong>讀取文字或數字時，遇到下一個空白或換行就會**停止讀取**。</p>
+                    <div class="font-mono text-emerald-400 text-[11px] bg-slate-900 p-2 rounded border border-slate-800">
+                        // 若 Stdin 輸入: "Alex 25"<br>
+                        cin &gt;&gt; name; // name 得到 "Alex"<br>
+                        cin &gt;&gt; age;  // age 得到 25
+                    </div>
+                </div>
+            </div>
+
+            <!-- 觀念 2：連續輸入鏈 -->
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700/80 space-y-2">
+                <h2 class="text-sm font-bold text-blue-400 flex items-center gap-2">
+                    <i class="fa-solid fa-link"></i> 2. 鏈式輸入 (Cascading cin)
+                </h2>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    可以將多個輸入合併在一行寫法：
+                </p>
+                <div class="font-mono text-xs bg-slate-950 p-2.5 rounded border border-slate-800 text-slate-200">
+                    cin &gt;&gt; length &gt;&gt; width &gt;&gt; height;
+                </div>
+                <p class="text-[11px] text-slate-400">
+                    這會依序尋找輸入緩衝區中的前三個資料項，彼此間用空白或換行隔開即可。
+                </p>
+            </div>
+
+            <!-- 觀念 3：型態不匹配問題 (Fail State) -->
+            <div class="bg-rose-950/30 border border-rose-500/30 p-4 rounded-xl space-y-2">
+                <div class="font-bold text-rose-400 text-xs flex items-center gap-1.5">
+                    <i class="fa-solid fa-triangle-exclamation"></i> 嚴謹思考：型態不匹配與 failbit
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    如果宣告 <code class="text-blue-300 font-mono">int age;</code>，使用者卻輸入了 <code class="text-amber-300 font-mono">"abc"</code>，<code class="text-amber-300 font-mono">cin</code> 會進入**錯誤狀態 (Fail State)**，讀取失敗，且 <code class="text-blue-300 font-mono">age</code> 會被預設給予 <code class="text-amber-300 font-mono">0</code>！後續的 <code class="text-amber-300 font-mono">cin</code> 也將全部失效。
+                </p>
+            </div>
+
+            <!-- 實作練習關卡 -->
+            <div class="border-t border-slate-700 pt-4 space-y-3">
+                <h2 class="font-bold text-white text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-list-check text-emerald-400"></i> 本課實作練習：長方形面積與周長計算器
+                </h2>
+                <div class="bg-slate-900/90 p-3 rounded-lg border border-slate-700 text-xs space-y-2 text-slate-300">
+                    <p>請使用 <code class="text-amber-300 font-mono">cin</code> 讀取長方形的**長**與**寬**（可能帶有小數點），計算並輸出其**面積**與**周長**。</p>
+                    <div class="bg-slate-950 p-2 rounded text-[11px] font-mono text-slate-400">
+                        測試 Stdin 輸入：<span class="text-amber-300">5.5 4.0</span><br>
+                        預期輸出：<br>
+                        長度: 5.5, 寬度: 4<br>
+                        面積: 22<br>
+                        周長: 19
+                    </div>
+                </div>
+
+                <button onclick="toggleAnswer()" id="answer-btn" class="w-full py-2.5 bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/40 rounded-lg text-xs transition font-semibold flex items-center justify-center gap-2">
+                    <i class="fa-regular fa-lightbulb"></i> 切換參考解答
+                </button>
+            </div>
+
+            <div class="mt-auto pt-4 text-xs text-slate-500 border-t border-slate-700/50 flex justify-between items-center">
+                <span>執行引擎：Judge0 Cloud GCC 9.2.0</span>
+                <span class="font-mono">C++17</span>
+            </div>
+        </aside>
+
+        <!-- 右側：編輯器與 Console -->
+        <main class="flex-1 flex flex-col bg-slate-950">
+            <div class="flex-1 p-4 border-b border-slate-800 flex flex-col min-h-[320px]">
+                <div class="text-xs text-slate-400 mb-2 flex justify-between items-center">
+                    <span class="font-mono flex items-center gap-2">
+                        <i class="fa-regular fa-file-code text-blue-400"></i> main.cpp
+                    </span>
+                </div>
+                <textarea id="code-editor" class="flex-1 bg-slate-900 text-slate-100 p-4 font-mono text-sm rounded-lg border border-slate-800 focus:outline-none focus:border-slate-600 resize-none leading-6 shadow-inner" spellcheck="false"></textarea>
+            </div>
+
+            <div class="p-3 bg-slate-900 border-b border-slate-800 flex items-center gap-3">
+                <label for="stdin-input" class="text-xs text-amber-400 font-mono font-bold whitespace-nowrap flex items-center gap-1.5">
+                    <i class="fa-solid fa-keyboard"></i> Stdin 輸入 (長 與 寬):
+                </label>
+                <input type="text" id="stdin-input" placeholder="請輸入兩個數字，用空白隔開（例：5.5 4.0）" 
+                       oninput="updateStdinValue(this.value)"
+                       class="flex-1 bg-slate-950 border border-slate-700 rounded px-3 py-1 text-xs text-amber-200 focus:outline-none focus:border-amber-400 font-mono">
+            </div>
+
+            <div class="h-64 bg-slate-950 p-4 flex flex-col relative">
+                <div class="text-xs text-slate-400 mb-2 flex justify-between items-center">
+                    <span class="font-mono flex items-center gap-2">
+                        <i class="fa-solid fa-terminal text-emerald-400"></i> Console 終端機輸出
+                    </span>
+                    <button onclick="clearConsole()" class="text-xs text-slate-500 hover:text-slate-300 transition">清空終端機</button>
+                </div>
+                
+                <div id="console-output" class="flex-1 font-mono text-xs overflow-y-auto bg-slate-900/90 p-3 rounded-lg border border-slate-800 space-y-1">
+                    <span class="text-slate-500">// 點擊「執行程式 (Run)」進行測試...</span>
+                </div>
+
+                <div id="cin-prompt-container" class="hidden absolute bottom-4 left-4 right-4 bg-slate-800/95 p-3 rounded-lg border border-amber-500/60 shadow-xl flex items-center gap-2 backdrop-blur">
+                    <span class="text-xs text-amber-400 font-mono font-bold whitespace-nowrap">▶ 輸入資料:</span>
+                    <input type="text" id="cin-input" onkeydown="handleCinSubmit(event)" class="flex-1 bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-xs text-amber-200 focus:outline-none focus:border-amber-400 font-mono">
+                    <button onclick="submitCinValue()" class="px-4 py-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded transition">送出</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../assets/js/runner.js"></script>
+    <script>
+        const defaultCode = `#include <iostream>
+using namespace std;
+
+int main() {
+    double length, width;
+    
+    // TODO 1: 使用 cin 連續讀取 length 與 width
+    
+    // TODO 2: 計算面積 (area) 與 周長 (perimeter)
+    double area = 0.0;
+    double perimeter = 0.0;
+    
+    // 輸出結果
+    cout << "=== 長方形計算結果 ===" << endl;
+    cout << "長度: " << length << ", 寬度: " << width << endl;
+    cout << "面積: " << area << endl;
+    cout << "周長: " << perimeter << endl;
+
+    return 0;
+}`;
+
+        const solutionCode = `#include <iostream>
+using namespace std;
+
+int main() {
+    double length, width;
+    
+    // 讀取輸入（用空白隔開）
+    cin >> length >> width;
+    
+    // 進行運算
+    double area = length * width;
+    double perimeter = 2 * (length + width);
+    
+    // 輸出結果
+    cout << "=== 長方形計算結果 ===" << endl;
+    cout << "長度: " << length << ", 寬度: " << width << endl;
+    cout << "面積: " << area << endl;
+    cout << "周長: " << perimeter << endl;
+
+    return 0;
+}`;
+
+        let showingSolution = false;
+
+        window.onload = () => {
+            document.getElementById('code-editor').value = defaultCode;
+            document.getElementById('stdin-input').value = "5.5 4.0";
+            window.currentStdin = "5.5 4.0";
+        };
+
+        function updateStdinValue(val) {
+            window.currentStdin = val;
+        }
+
+        function handleStartRun() {
+            window.currentStdin = document.getElementById('stdin-input').value;
+            runCode();
+        }
+
+        function resetCode() {
+            document.getElementById('code-editor').value = defaultCode;
+            document.getElementById('stdin-input').value = "5.5 4.0";
+            window.currentStdin = "5.5 4.0";
+            showingSolution = false;
+            document.getElementById('answer-btn').innerHTML = `<i class="fa-regular fa-lightbulb"></i> 切換參考解答`;
+            clearConsole();
+        }
+
+        function toggleAnswer() {
+            if (showingSolution) {
+                document.getElementById('code-editor').value = defaultCode;
+                document.getElementById('answer-btn').innerHTML = `<i class="fa-regular fa-lightbulb"></i> 切換參考解答`;
+                showingSolution = false;
+            } else {
+                document.getElementById('code-editor').value = solutionCode;
+                document.getElementById('answer-btn').innerHTML = `<i class="fa-solid fa-rotate-left"></i> 切換回練習範本`;
+                showingSolution = true;
+            }
+        }
+    </script>
+</body>
+</html>
