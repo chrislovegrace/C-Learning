@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第二課：變數宣告與資料型態 - C++ 學習教室</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome 圖示 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
+
+    <!-- 頂部導覽列 -->
+    <header class="bg-slate-800 px-6 py-3 flex items-center justify-between border-b border-slate-700 shadow-md">
+        <div class="flex items-center space-x-4">
+            <span class="text-blue-400 font-bold flex items-center gap-2 text-lg">
+                <i class="fa-solid fa-code"></i> C++ 程式設計入門
+            </span>
+            <span class="text-slate-600">|</span>
+            <span class="text-white font-semibold">第二課：變數宣告與資料型態</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="resetCode()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium rounded transition flex items-center gap-1">
+                <i class="fa-solid fa-rotate-left"></i> 重置程式碼
+            </button>
+            <button onclick="handleStartRun()" class="px-5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm rounded shadow transition flex items-center gap-2">
+                <i class="fa-solid fa-play"></i> 執行程式 (Run)
+            </button>
+        </div>
+    </header>
+
+    <!-- 主要內容區 -->
+    <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+        
+        <!-- 左側：課程詳細說明與教學導覽 -->
+        <aside class="w-full lg:w-[450px] bg-slate-800/80 p-6 border-r border-slate-700 flex flex-col overflow-y-auto space-y-6">
+            
+            <!-- 課程標頭 -->
+            <div class="space-y-2">
+                <div class="inline-block bg-blue-500/20 text-blue-300 text-xs px-2.5 py-1 rounded-full font-semibold">
+                    Lesson 02
+                </div>
+                <h1 class="text-2xl font-bold text-white">變數宣告與基礎資料型態</h1>
+                <p class="text-slate-300 text-sm leading-relaxed">
+                    在程式中，「變數」就像是貼有標籤的**記憶體盒子**，用來暫存資料。宣告變數時，必須明確告知 C++ 這個盒子要裝什麼類型的資料。
+                </p>
+            </div>
+
+            <!-- 核心概念 1：宣告與賦值 -->
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700/80 space-y-3">
+                <h2 class="text-sm font-bold text-amber-400 flex items-center gap-2">
+                    <i class="fa-solid fa-box-archive"></i> 變數宣告與初值設定
+                </h2>
+                <div class="font-mono text-xs bg-slate-950 p-2.5 rounded border border-slate-800 text-slate-200 space-y-1">
+                    <div><span class="text-blue-400">int</span> age; <span class="text-slate-500">// 1. 宣告：準備一個放整數的盒子</span></div>
+                    <div>age = <span class="text-amber-300">18</span>; <span class="text-slate-500">// 2. 賦值：放入數值 18</span></div>
+                    <div class="pt-1 text-emerald-400"><span class="text-blue-400">int</span> score = <span class="text-amber-300">95</span>; <span class="text-slate-500">// 也可以宣告同時給初值！</span></div>
+                </div>
+            </div>
+
+            <!-- 核心概念 2：常見資料型態記憶卡 -->
+            <div class="space-y-3">
+                <h2 class="text-sm font-bold text-slate-200 flex items-center gap-2">
+                    <i class="fa-solid fa-layer-group text-blue-400"></i> 四大常用基礎資料型態
+                </h2>
+                <div class="grid grid-cols-1 gap-2.5 text-xs">
+                    
+                    <div class="bg-slate-900/60 p-3 rounded-lg border-l-4 border-blue-500 flex justify-between items-start">
+                        <div>
+                            <span class="font-mono font-bold text-blue-400 text-sm">int</span>
+                            <span class="text-slate-300 ml-2">整數 (Integer)</span>
+                            <p class="text-slate-400 mt-1">儲存沒有小數點的整數，例如：<code class="text-amber-300 font-mono">10</code>, <code class="text-amber-300 font-mono">-5</code>, <code class="text-amber-300 font-mono">0</code></p>
+                        </div>
+                        <span class="bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-mono text-[10px]">4 Bytes</span>
+                    </div>
+
+                    <div class="bg-slate-900/60 p-3 rounded-lg border-l-4 border-emerald-500 flex justify-between items-start">
+                        <div>
+                            <span class="font-mono font-bold text-emerald-400 text-sm">double</span>
+                            <span class="text-slate-300 ml-2">雙精度浮點數 (Decimal)</span>
+                            <p class="text-slate-400 mt-1">儲存包含小數點的實數，例如：<code class="text-amber-300 font-mono">3.14159</code>, <code class="text-amber-300 font-mono">-0.5</code></p>
+                        </div>
+                        <span class="bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-mono text-[10px]">8 Bytes</span>
+                    </div>
+
+                    <div class="bg-slate-900/60 p-3 rounded-lg border-l-4 border-amber-500 flex justify-between items-start">
+                        <div>
+                            <span class="font-mono font-bold text-amber-400 text-sm">char</span>
+                            <span class="text-slate-300 ml-2">單一字元 (Character)</span>
+                            <p class="text-slate-400 mt-1">只儲存**單個字元**，須用單引號包裹：<code class="text-amber-300 font-mono">'A'</code>, <code class="text-amber-300 font-mono">'!'</code></p>
+                        </div>
+                        <span class="bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-mono text-[10px]">1 Byte</span>
+                    </div>
+
+                    <div class="bg-slate-900/60 p-3 rounded-lg border-l-4 border-purple-500 flex justify-between items-start">
+                        <div>
+                            <span class="font-mono font-bold text-purple-400 text-sm">string</span>
+                            <span class="text-slate-300 ml-2">字串 (Text)</span>
+                            <p class="text-slate-400 mt-1">儲存一段文字，須使用雙引號：<code class="text-amber-300 font-mono">"Hello World"</code><br><span class="text-slate-500">（需包含 &lt;string&gt; 標頭檔）</span></p>
+                        </div>
+                        <span class="bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-mono text-[10px]">標頭檔</span>
+                    </div>
+
+                    <div class="bg-slate-900/60 p-3 rounded-lg border-l-4 border-rose-500 flex justify-between items-start">
+                        <div>
+                            <span class="font-mono font-bold text-rose-400 text-sm">bool</span>
+                            <span class="text-slate-300 ml-2">布林值 (Boolean)</span>
+                            <p class="text-slate-400 mt-1">表示邏輯判斷，只有兩種值：<code class="text-amber-300 font-mono">true</code> (真) 或 <code class="text-amber-300 font-mono">false</code> (假)</p>
+                        </div>
+                        <span class="bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-mono text-[10px]">1 Byte</span>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- 常見踩坑提醒 -->
+            <div class="bg-rose-950/30 border border-rose-500/30 p-4 rounded-xl space-y-2">
+                <div class="font-bold text-rose-400 text-xs flex items-center gap-1.5">
+                    <i class="fa-solid fa-triangle-exclamation"></i> 初學者極易犯錯的細節：
+                </div>
+                <ul class="list-disc list-inside text-slate-300 text-xs space-y-1.5 leading-relaxed">
+                    <li><strong class="text-white">引號差異：</strong><code class="text-amber-300 font-mono">'A'</code> (char 用單引號) 與 <code class="text-amber-300 font-mono">"A"</code> (string 用雙引號) 完全不同！</li>
+                    <li><strong class="text-white">整數除法：</strong>兩個 <code class="text-blue-400 font-mono">int</code> 相除（例如 <code class="text-amber-300 font-mono">5 / 2</code>）結果會自動截斷小數變成 <code class="text-amber-300 font-mono">2</code>！要保留小數必須至少有一個數為 <code class="text-emerald-400 font-mono">double</code>。</li>
+                    <li><strong class="text-white">變數命名：</strong>不能以數字開頭，且不能使用 C++ 關鍵字（如 <code class="text-blue-400 font-mono">int</code>, <code class="text-blue-400 font-mono">return</code>）。</li>
+                </ul>
+            </div>
+
+            <!-- 任務指引與解答按鈕 -->
+            <div class="border-t border-slate-700 pt-4 space-y-3">
+                <h2 class="font-bold text-white text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-bullseye text-emerald-400"></i> 本課實作任務：
+                </h2>
+                <div class="bg-slate-900/90 p-3 rounded-lg border border-slate-700 text-xs space-y-2 text-slate-300 leading-relaxed">
+                    <p>請完成右側程式碼，正確宣告變數並印出以下**個人玩家卡片**資訊：</p>
+                    <ol class="list-decimal list-inside space-y-1 text-slate-200 font-mono bg-slate-950 p-2 rounded">
+                        <li>玩家名稱 (string): <span class="text-purple-300">Alex</span></li>
+                        <li>玩家等級 (int): <span class="text-blue-300">25</span></li>
+                        <li>技能冷卻時間 (double): <span class="text-emerald-300">3.5</span> 秒</li>
+                        <li>代表評等字母 (char): <span class="text-amber-300">'S'</span></li>
+                        <li>是否為 VIP (bool): <span class="text-rose-300">true</span> (輸出為 1)</li>
+                    </ol>
+                </div>
+
+                <button onclick="toggleAnswer()" id="answer-btn" class="w-full py-2.5 bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/40 rounded-lg text-xs transition font-semibold flex items-center justify-center gap-2">
+                    <i class="fa-regular fa-lightbulb"></i> 切換參考解答
+                </button>
+            </div>
+
+            <div class="mt-auto pt-4 text-xs text-slate-500 border-t border-slate-700/50 flex justify-between items-center">
+                <span>執行引擎：Judge0 Cloud GCC 9.2.0</span>
+                <span class="font-mono">C++17</span>
+            </div>
+        </aside>
+
+        <!-- 右側：程式編輯器與 Console 區域 -->
+        <main class="flex-1 flex flex-col bg-slate-950">
+            
+            <!-- Code Editor 區段 -->
+            <div class="flex-1 p-4 border-b border-slate-800 flex flex-col min-h-[320px]">
+                <div class="text-xs text-slate-400 mb-2 flex justify-between items-center">
+                    <span class="font-mono flex items-center gap-2">
+                        <i class="fa-regular fa-file-code text-blue-400"></i> main.cpp
+                    </span>
+                    <span class="text-xs text-slate-500">// 請在下方編輯區填入對應的變數宣告</span>
+                </div>
+                <!-- 編輯器 textarea -->
+                <textarea id="code-editor" class="flex-1 bg-slate-900 text-slate-100 p-4 font-mono text-sm rounded-lg border border-slate-800 focus:outline-none focus:border-slate-600 resize-none leading-6 shadow-inner" spellcheck="false"></textarea>
+            </div>
+
+            <!-- Standard Input (stdin) 設定區 -->
+            <div class="p-3 bg-slate-900 border-b border-slate-800 flex items-center gap-3">
+                <label for="stdin-input" class="text-xs text-amber-400 font-mono font-bold whitespace-nowrap flex items-center gap-1.5">
+                    <i class="fa-solid fa-keyboard"></i> Stdin 輸入:
+                </label>
+                <input type="text" id="stdin-input" placeholder="本單元練習暫不需要輸入資料..." 
+                       oninput="updateStdinValue(this.value)"
+                       class="flex-1 bg-slate-950 border border-slate-700 rounded px-3 py-1 text-xs text-amber-200 focus:outline-none focus:border-amber-400 font-mono disabled:opacity-50">
+            </div>
+
+            <!-- Console 終端機區段 -->
+            <div class="h-64 bg-slate-950 p-4 flex flex-col relative">
+                <div class="text-xs text-slate-400 mb-2 flex justify-between items-center">
+                    <span class="font-mono flex items-center gap-2">
+                        <i class="fa-solid fa-terminal text-emerald-400"></i> Console 終端機輸出
+                    </span>
+                    <button onclick="clearConsole()" class="text-xs text-slate-500 hover:text-slate-300 transition">清空終端機</button>
+                </div>
+                
+                <!-- 終端機文字顯示區域 -->
+                <div id="console-output" class="flex-1 font-mono text-xs overflow-y-auto bg-slate-900/90 p-3 rounded-lg border border-slate-800 space-y-1">
+                    <span class="text-slate-500">// 點擊右上角「執行程式 (Run)」編譯並檢視變數輸出結果...</span>
+                </div>
+
+                <!-- 動態 cin 輸入跳彈視窗 -->
+                <div id="cin-prompt-container" class="hidden absolute bottom-4 left-4 right-4 bg-slate-800/95 p-3 rounded-lg border border-amber-500/60 shadow-xl flex items-center gap-2 backdrop-blur">
+                    <span class="text-xs text-amber-400 font-mono font-bold whitespace-nowrap">▶ 輸入資料:</span>
+                    <input type="text" id="cin-input" onkeydown="handleCinSubmit(event)" class="flex-1 bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-xs text-amber-200 focus:outline-none focus:border-amber-400 font-mono">
+                    <button onclick="submitCinValue()" class="px-4 py-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded transition">送出</button>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- 載入共享執行檔 runner.js -->
+    <script src="../assets/js/runner.js"></script>
+
+    <!-- 頁面初始化與邏輯 -->
+    <script>
+        // 學生實作範本（帶有引導 TODO 註解）
+        const defaultCode = `#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    // TODO 1: 宣告一個 string 變數 playerName 並設定為 "Alex"
+    string playerName = "Alex";
+
+    // TODO 2: 宣告一個 int 變數 level 並設定為 25
+    
+    // TODO 3: 宣告一個 double 變數 cdTime 並設定為 3.5
+    
+    // TODO 4: 宣告一個 char 變數 rankGrading 並設定為 'S'
+    
+    // TODO 5: 宣告一個 bool 變數 isVIP 並設定為 true
+    
+
+    // 輸出玩家卡片資訊
+    cout << "=== 玩家資料卡 ===" << endl;
+    cout << "名稱: " << playerName << endl;
+    // cout << "等級: " << level << endl;
+    // cout << "冷卻: " << cdTime << " 秒" << endl;
+    // cout << "階級: " << rankGrading << endl;
+    // cout << "VIP : " << isVIP << endl;
+
+    return 0;
+}`;
+
+        // 完整解答範本
+        const solutionCode = `#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    // 正確宣告五種常見資料型態
+    string playerName = "Alex";
+    int level = 25;
+    double cdTime = 3.5;
+    char rankGrading = 'S';
+    bool isVIP = true;
+
+    // 輸出玩家卡片資訊
+    cout << "=== 玩家資料卡 ===" << endl;
+    cout << "名稱: " << playerName << endl;
+    cout << "等級: " << level << endl;
+    cout << "冷卻: " << cdTime << " 秒" << endl;
+    cout << "階級: " << rankGrading << endl;
+    cout << "VIP : " << isVIP << endl;
+
+    return 0;
+}`;
+
+        let showingSolution = false;
+
+        window.onload = () => {
+            document.getElementById('code-editor').value = defaultCode;
+            document.getElementById('stdin-input').value = "";
+            window.currentStdin = "";
+        };
+
+        function updateStdinValue(val) {
+            window.currentStdin = val;
+        }
+
+        function handleStartRun() {
+            window.currentStdin = document.getElementById('stdin-input').value;
+            runCode();
+        }
+
+        function resetCode() {
+            document.getElementById('code-editor').value = defaultCode;
+            document.getElementById('stdin-input').value = "";
+            window.currentStdin = "";
+            showingSolution = false;
+            document.getElementById('answer-btn').innerHTML = `<i class="fa-regular fa-lightbulb"></i> 切換參考解答`;
+            clearConsole();
+        }
+
+        function toggleAnswer() {
+            if (showingSolution) {
+                document.getElementById('code-editor').value = defaultCode;
+                document.getElementById('answer-btn').innerHTML = `<i class="fa-regular fa-lightbulb"></i> 切換參考解答`;
+                showingSolution = false;
+            } else {
+                document.getElementById('code-editor').value = solutionCode;
+                document.getElementById('answer-btn').innerHTML = `<i class="fa-solid fa-rotate-left"></i> 切換回練習範本`;
+                showingSolution = true;
+            }
+        }
+    </script>
+</body>
+</html>
