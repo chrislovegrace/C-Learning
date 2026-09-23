@@ -39,7 +39,6 @@
                 </p>
             </div>
 
-            <!-- 核心觀念觀摩指南 -->
             <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700 space-y-3">
                 <h2 class="text-sm font-bold text-amber-400 flex items-center gap-2">
                     <i class="fa-solid fa-graduation-cap"></i> 閱讀右側範例學習重點：
@@ -47,19 +46,18 @@
                 <ul class="list-disc list-inside text-xs text-slate-300 space-y-2 leading-relaxed">
                     <li><strong class="text-white">範例 1 (基本單筆輸入)：</strong>理解 <code class="text-amber-300 font-mono">cin &gt;&gt; var;</code> 的基本寫法。</li>
                     <li><strong class="text-white">範例 2 (連續多筆輸入)：</strong>觀察空白或 Enter 如何作為資料的分隔符。</li>
-                    <li><strong class="text-white">範例 3 (混合型態讀取)：</strong>當連續讀取 <code class="text-purple-300 font-mono">string</code>、<code class="text-blue-300 font-mono">int</code> 與 <code class="text-emerald-300 font-mono">double</code> 時，C++ 會如何自動型態匹配。</li>
+                    <li><strong class="text-white">範例 3 (混合型態讀取)：</strong>連續讀取不同型態的資料。</li>
                 </ul>
             </div>
 
-            <!-- 右側關卡說明 -->
             <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700 space-y-2">
                 <h2 class="text-sm font-bold text-emerald-400 flex items-center gap-2">
                     <i class="fa-solid fa-flag"></i> 實作關卡簡介：
                 </h2>
                 <div class="text-xs space-y-1.5 text-slate-300">
-                    <p><strong class="text-amber-300">關卡 1：</strong>個人哈囉問候器（字串讀取與輸出串接）</p>
-                    <p><strong class="text-emerald-300">關卡 2：</strong>購物車總價計算器（數量 × 單價與加算稅額）</p>
-                    <p><strong class="text-rose-300">關卡 3：</strong>溫度單位轉換器（華氏轉攝氏公式運算）</p>
+                    <p><strong class="text-amber-300">關卡 1：</strong>個人哈囉問候器（讀取名字與年齡）</p>
+                    <p><strong class="text-emerald-300">關卡 2：</strong>購物車總價計算器（數量、單價、稅率）</p>
+                    <p><strong class="text-rose-300">關卡 3：</strong>溫度單位轉換器（華氏轉攝氏）</p>
                 </div>
             </div>
 
@@ -69,13 +67,12 @@
             </div>
         </aside>
 
-        <!-- 右側：分頁控制編輯器與 Console -->
+        <!-- 右側：編輯器與 Console -->
         <main class="flex-1 flex flex-col bg-slate-950">
             
             <!-- 頁籤導覽列 (Tabs Header) -->
             <div class="bg-slate-900 border-b border-slate-800 px-4 pt-2 flex space-x-2 overflow-x-auto text-xs font-mono">
-                <!-- 範例區 -->
-                <button onclick="switchTab('ex1')" id="tab-ex1" class="tab-btn active-tab px-3 py-2 rounded-t-lg bg-slate-800 text-blue-400 font-bold border-t-2 border-blue-400 flex items-center gap-1.5">
+                <button onclick="switchTab('ex1')" id="tab-ex1" class="tab-btn px-3 py-2 rounded-t-lg bg-slate-800 text-amber-400 font-bold border-t-2 border-amber-400 flex items-center gap-1.5">
                     <i class="fa-regular fa-file-code"></i> 範例1: 基本輸入
                 </button>
                 <button onclick="switchTab('ex2')" id="tab-ex2" class="tab-btn px-3 py-2 rounded-t-lg bg-slate-900/50 text-slate-400 hover:text-slate-200 flex items-center gap-1.5">
@@ -84,7 +81,6 @@
                 <button onclick="switchTab('ex3')" id="tab-ex3" class="tab-btn px-3 py-2 rounded-t-lg bg-slate-900/50 text-slate-400 hover:text-slate-200 flex items-center gap-1.5">
                     <i class="fa-regular fa-file-code"></i> 範例3: 異型態混合讀取
                 </button>
-                <!-- 練習關卡區 -->
                 <button onclick="switchTab('q1')" id="tab-q1" class="tab-btn px-3 py-2 rounded-t-lg bg-slate-900/50 text-amber-400 hover:text-amber-300 flex items-center gap-1.5">
                     <i class="fa-solid fa-pen-to-square"></i> 關卡1: 名字問候
                 </button>
@@ -136,19 +132,18 @@
 
     <script src="../assets/js/runner.js"></script>
     <script>
-        // 資料庫：收錄 3 個範例 + 3 個練習題 (包含預設 code、預設 stdin 與解答)
         const tabData = {
             ex1: {
                 title: "範例 1：基本單筆數字與字串讀取",
                 stdin: "Alex",
                 isQuiz: false,
-                code: `// 範例 1：使用 cin 讀取單一字串\n#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string name;\n    cout << "請輸入名字: ";\n    cin >> name;\n    cout << "你好, " << name << "!" << endl;\n    return 0;\n}`
+                code: `// 範例 1：使用 cin 讀取單一字串\n#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string name;\n    cin >> name;\n    cout << "你好, " << name << "!" << endl;\n    return 0;\n}`
             },
             ex2: {
-                title: "範例 2：鏈式連續輸入 (用空白隔開 multiple inputs)",
+                title: "範例 2：鏈式連續輸入 (用空白隔開)",
                 stdin: "10 20 30",
                 isQuiz: false,
-                code: `// 範例 2：用 cin >> a >> b >> c 一次讀取三個數字\n#include <iostream>\nusing namespace std;\n\nint main() {\n    int num1, num2, num3;\n    cout << "請輸入三個整數 (用空白隔開): ";\n    cin >> num1 >> num2 >> num3;\n    int sum = num1 + num2 + num3;\n    cout << "三數之和為: " << sum << endl;\n    return 0;\n}`
+                code: `// 範例 2：用 cin >> a >> b >> c 一次讀取三個數字\n#include <iostream>\nusing namespace std;\n\nint main() {\n    int num1, num2, num3;\n    cin >> num1 >> num2 >> num3;\n    int sum = num1 + num2 + num3;\n    cout << "三數之和為: " << sum << endl;\n    return 0;\n}`
             },
             ex3: {
                 title: "範例 3：異型態混合讀取 (string, int, double)",
@@ -167,14 +162,14 @@
                 title: "關卡 2：購物車總價計算器",
                 stdin: "3 150.0 0.05",
                 isQuiz: true,
-                code: `// TODO: 讀取 購買數量(int)、單價(double)、稅率(double，例如 0.05 代表 5%)\n// 計算並輸出含稅總價：數量 * 單價 * (1 + 稅率)\n#include <iostream>\nusing namespace std;\n\nint main() {\n    int count;\n    double price, taxRate;\n    \n    // 請撰寫 cin 讀取與計算\n    \n    return 0;\n}`,
+                code: `// TODO: 讀取 購買數量(int)、單價(double)、稅率(double，例如 0.05 代表 5%)\n// 計算並輸出含稅總價：數量 * 單價 * (1 + 稅率)\n#include <iostream>\nusing namespace std;\n\nint main() {\n    int count;\n    double price, taxRate;\n    cin >> count >> price >> taxRate;\n    \n    // 請計算並輸出總價\n    cout << "總金額: " << count * price * (1 + taxRate) << " 元" << endl;\n    return 0;\n}`,
                 solution: `#include <iostream>\nusing namespace std;\n\nint main() {\n    int count;\n    double price, taxRate;\n    cin >> count >> price >> taxRate;\n    double total = count * price * (1 + taxRate);\n    cout << "含稅總金額為: " << total << " 元" << endl;\n    return 0;\n}`
             },
             q3: {
                 title: "關卡 3：華氏溫度轉攝氏溫度",
                 stdin: "98.6",
                 isQuiz: true,
-                code: `// TODO: 讀取華氏溫度 (double fahrenheit)\n// 轉成攝氏溫度公式: celsius = (fahrenheit - 32) * 5 / 9\n// 請特別注意整數除法的陷阱！\n#include <iostream>\nusing namespace std;\n\nint main() {\n    double fahrenheit;\n    \n    // 請撰寫程式碼\n    \n    return 0;\n}`,
+                code: `// TODO: 讀取華氏溫度 (double fahrenheit)\n// 轉成攝氏溫度公式: celsius = (fahrenheit - 32) * 5 / 9\n#include <iostream>\nusing namespace std;\n\nint main() {\n    double fahrenheit;\n    cin >> fahrenheit;\n    \n    // 請撰寫計算邏輯\n    \n    return 0;\n}`,
                 solution: `#include <iostream>\nusing namespace std;\n\nint main() {\n    double fahrenheit;\n    cin >> fahrenheit;\n    double celsius = (fahrenheit - 32.0) * 5.0 / 9.0;\n    cout << "華氏 " << fahrenheit << " 度 = 攝氏 " << celsius << " 度" << endl;\n    return 0;\n}`
             }
         };
@@ -191,19 +186,23 @@
             showingSolution = false;
             const data = tabData[key];
 
-            // 更新 UI 狀態
+            // 1. 切換 Tab 樣式
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.className = "tab-btn px-3 py-2 rounded-t-lg bg-slate-900/50 text-slate-400 hover:text-slate-200 flex items-center gap-1.5";
             });
             const activeBtn = document.getElementById(`tab-${key}`);
             activeBtn.className = "tab-btn active-tab px-3 py-2 rounded-t-lg bg-slate-800 text-amber-400 font-bold border-t-2 border-amber-400 flex items-center gap-1.5";
 
+            // 2. 更新編輯器內容
             document.getElementById('tab-title').innerText = data.title;
             document.getElementById('code-editor').value = data.code;
-            document.getElementById('stdin-input').value = data.stdin;
-            window.currentStdin = data.stdin;
+            
+            // 3. 【修復關鍵 1】：同步更新 Stdin 輸入框 DOM 與 window.currentStdin 全域變數
+            const stdinElem = document.getElementById('stdin-input');
+            stdinElem.value = data.stdin;
+            window.currentStdin = data.stdin; // 👈 確保全域變數有被寫入！
 
-            // 切換答案按鈕顯示
+            // 4. 切換答案按鈕狀態
             const ansBtn = document.getElementById('toggle-ans-btn');
             if (data.isQuiz) {
                 ansBtn.classList.remove('hidden');
@@ -233,9 +232,14 @@
             switchTab(currentTabKey);
         }
 
-        function updateStdinValue(val) { window.currentStdin = val; }
+        function updateStdinValue(val) {
+            window.currentStdin = val;
+        }
+
+        // 【修復關鍵 2】：按下 Run 的瞬間，無論如何都強制重新讀取 input 欄位的最新數值！
         function handleStartRun() {
-            window.currentStdin = document.getElementById('stdin-input').value;
+            const currentInputValue = document.getElementById('stdin-input').value;
+            window.currentStdin = currentInputValue; // 強制蓋掉舊值，確保傳給 Judge0 的 Stdin 永遠精準
             runCode();
         }
     </script>
