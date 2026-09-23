@@ -57,6 +57,17 @@ function submitCinValue() {
     }
 }
 
+// 輔助函式：防 HTML 標籤注入與渲染異常
+function escapeHtml(text) {
+    if (!text) return '';
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 async function runCode() {
     const consoleBox = document.getElementById('console-output') || 
                        document.getElementById('console') || 
@@ -67,7 +78,7 @@ async function runCode() {
         return;
     }
     
-    consoleBox.innerHTML = '<span style="color: #60a5fa;">[系統] 正在將程式碼編碼並傳送至 Judge0 雲端 GCC 編譯器...</span><br>';
+    consoleBox.innerHTML = '<span style="color: #60a5fa;">[系統] 正在將程式碼與輸入資料編碼並傳送至 Judge0 雲端 GCC 編譯器...</span><br>';
 
     try {
         let code = "";
@@ -83,8 +94,14 @@ async function runCode() {
             throw new Error("找不到程式碼編輯器元件！");
         }
 
-        // 💡 關鍵修復：按照 Judge0 官方強制要求，將程式碼轉為 Base64 (支援中文與特殊字元)
+        // 1. 強制讀取當前 Stdin 輸入框 DOM，若沒有則讀取全域變數
+        const stdinInputElem = document.getElementById('stdin-input');
+        const rawStdin = stdinInputElem ? stdinInputElem.value : (window.currentStdin || "");
+
+        // 2. 💡【關鍵修復】因為 API 帶了 base64_encoded=true，source_code 與 stdin 都必須轉為 Base64！
         const encodedCode = btoa(unescape(encodeURIComponent(code)));
+        const encodedStdin = btoa(unescape(encodeURIComponent(rawStdin)));
+
         const cacheBuster = Date.now();
         const url = `https://ce.judge0.com/submissions?wait=true&base64_encoded=true&_cb=${cacheBuster}`;
 
@@ -96,7 +113,7 @@ async function runCode() {
             body: JSON.stringify({
                 source_code: encodedCode,
                 language_id: 54, // C++ (GCC 9.2.0)
-                stdin: window.currentStdin || ""
+                stdin: encodedStdin // 👈 這裡同步給予 Base64 編碼！
             })
         });
 
@@ -107,7 +124,7 @@ async function runCode() {
 
         const result = await response.json();
 
-        // 由於我們請求時指定 base64_encoded=true，API 回傳的 stdout 與 compile_output 會是 Base64 格式，需要解碼回來
+        // 3. 安全 Base64 解碼函式（完整支援 UTF-8 中文字串）
         const decodeBase64 = (base64Str) => {
             if (!base64Str) return "";
             try {
@@ -121,14 +138,14 @@ async function runCode() {
         const stdout = decodeBase64(result.stdout);
         const stderr = decodeBase64(result.stderr);
 
-        // 1. 檢查編譯失敗 (status.id === 6 代表 Compilation Error)
+        // 檢查編譯失敗 (status.id === 6 代表 Compilation Error)
         if (result.status && result.status.id === 6) {
             consoleBox.innerHTML += `<br><span style="color: #f87171; font-weight: bold;">❌ [編譯失敗 Compile Error]</span><br>`;
             consoleBox.innerHTML += `<pre style="color: #fca5a5; background: #2d1618; padding: 10px; border-radius: 6px; white-space: pre-wrap; margin-top: 5px;">${escapeHtml(compileOutput || '語法錯誤')}</pre>`;
             return;
         }
 
-        // 2. 檢查執行期錯誤
+        // 檢查執行期錯誤 (status.id >= 7)
         if (result.status && result.status.id >= 7) {
             consoleBox.innerHTML += `<br><span style="color: #f87171; font-weight: bold;">❌ [執行期錯誤: ${result.status.description}]</span><br>`;
             if (stderr) {
@@ -137,7 +154,7 @@ async function runCode() {
             return;
         }
 
-        // 3. 成功執行
+        // 成功執行
         consoleBox.innerHTML += `<br><span style="color: #4ade80; font-weight: bold;">[系統] 程式執行成功 (Exit Code 0)</span><br><br>`;
         if (stdout) {
             consoleBox.innerHTML += `<pre style="color: #fbbf24; font-size: 15px; font-weight: bold; white-space: pre-wrap; margin-top: 5px;">${escapeHtml(stdout)}</pre>`;
@@ -150,16 +167,6 @@ async function runCode() {
         consoleBox.innerHTML += `<pre style="color: #fca5a5; margin-top: 5px;">${escapeHtml(err.message)}</pre>`;
         console.error("執行崩潰錯誤詳情：", err);
     }
-}
-
-function escapeHtml(text) {
-    if (!text) return "";
-    return text
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
 }
 // HTML 字元跳脫函式
 function escapeHtml(text) {
