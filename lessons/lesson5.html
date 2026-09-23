@@ -3,26 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>第五課：綜合名片實作 - C++ 學習教室</title>
-    <!-- Tailwind CSS CDN -->
+    <title>第五課：綜合實作 - 創作者名片產生器</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome 圖示 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
 
-    <!-- 頂部導覽列 -->
     <header class="bg-slate-800 px-6 py-3 flex items-center justify-between border-b border-slate-700 shadow-md">
         <div class="flex items-center space-x-4">
             <span class="text-blue-400 font-bold flex items-center gap-2 text-lg">
                 <i class="fa-solid fa-code"></i> C++ 程式設計入門
             </span>
             <span class="text-slate-600">|</span>
-            <span class="text-white font-semibold">第五課：綜合實作 - 創作者名片產生器</span>
+            <span class="text-white font-semibold">第五課：綜合實作 - 名片產生器</span>
         </div>
         <div class="flex items-center gap-3">
-            <button onclick="resetCode()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium rounded transition flex items-center gap-1">
-                <i class="fa-solid fa-rotate-left"></i> 重置程式碼
+            <button onclick="resetCurrentTab()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium rounded transition flex items-center gap-1">
+                <i class="fa-solid fa-rotate-left"></i> 重置專案
             </button>
             <button onclick="handleStartRun()" class="px-5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm rounded shadow transition flex items-center gap-2">
                 <i class="fa-solid fa-play"></i> 執行程式 (Run)
@@ -30,70 +27,35 @@
         </div>
     </header>
 
-    <!-- 主要內容區 -->
     <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
         
-        <!-- 左側：教學說明與專案規格 -->
-        <aside class="w-full lg:w-[480px] bg-slate-800/80 p-6 border-r border-slate-700 flex flex-col overflow-y-auto space-y-6">
-            
+        <aside class="w-full lg:w-[450px] bg-slate-800/80 p-6 border-r border-slate-700 flex flex-col overflow-y-auto space-y-6">
             <div class="space-y-2">
-                <div class="inline-block bg-purple-500/20 text-purple-300 text-xs px-2.5 py-1 rounded-full font-semibold">
-                    Lesson 05 - Mini Project
-                </div>
-                <h1 class="text-2xl font-bold text-white">創作者名片產生器</h1>
+                <div class="inline-block bg-purple-500/20 text-purple-300 text-xs px-2.5 py-1 rounded-full font-semibold">Lesson 05 - Project</div>
+                <h1 class="text-2xl font-bold text-white">綜合實作關卡選單</h1>
                 <p class="text-slate-300 text-sm leading-relaxed">
-                    本課為第一階段總結專案！你將整合 <code class="text-blue-300 font-mono">string</code>, <code class="text-blue-300 font-mono">int</code>, <code class="text-blue-300 font-mono">double</code>, <code class="text-amber-300 font-mono">cin</code> 與 <code class="text-amber-300 font-mono">cout</code>，打造一個自動計算與排版名片的程式。
+                    本課綜合前四課知識：變數、資料型態、運算式與 <code class="text-amber-300 font-mono">cin / cout</code>，選擇下方不同專案進行練習。
                 </p>
             </div>
 
-            <!-- 專案需求細節 -->
-            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700/80 space-y-3">
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700 space-y-2">
                 <h2 class="text-sm font-bold text-purple-400 flex items-center gap-2">
-                    <i class="fa-solid fa-address-card"></i> 專案規格說明
+                    <i class="fa-solid fa-layer-group"></i> 專案任務清單：
                 </h2>
-                <div class="text-xs text-slate-300 space-y-2 leading-relaxed">
-                    <p>程式需依序透過 Stdin 讀取 4 個關鍵欄位：</p>
-                    <ol class="list-decimal list-inside space-y-1 font-mono text-slate-200 bg-slate-950 p-2.5 rounded border border-slate-800">
-                        <li><span class="text-purple-300">string</span> creatorName - 創作者名稱</li>
-                        <li><span class="text-blue-300">int</span> subscriberCount - 訂閱人數</li>
-                        <li><span class="text-emerald-300">double</span> avgViews - 影片平均觀看數</li>
-                        <li><span class="text-amber-300">int</span> videoCount - 總上片數量</li>
-                    </ol>
-                    <p class="text-slate-400 pt-1">
-                        內部需自動計算出衍生指標：<br>
-                        <strong class="text-amber-300">頻道總總觀看數 = avgViews * videoCount</strong>
-                    </p>
+                <div class="text-xs space-y-2 text-slate-300">
+                    <div>
+                        <strong class="text-amber-300">專案 A：YouTuber 頻道卡</strong><br>
+                        計算頻道總觀看數與平均每部發片產量。
+                    </div>
+                    <div>
+                        <strong class="text-emerald-300">專案 B：RPG 勇者英雄卡</strong><br>
+                        計算角色戰力值 (攻擊*2 + 防禦*1.5) 與勝率。
+                    </div>
+                    <div>
+                        <strong class="text-rose-300">專案 C：工程師薪資收據</strong><br>
+                        計算時薪、加班費與扣除勞健保後的淨收入。
+                    </div>
                 </div>
-            </div>
-
-            <!-- 觀念點撥：格式化輸出技巧 -->
-            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700/80 space-y-2">
-                <h2 class="text-sm font-bold text-blue-400 flex items-center gap-2">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i> ASCII 排版技巧
-                </h2>
-                <p class="text-xs text-slate-300 leading-relaxed">
-                    善用字元符號（如 <code class="text-slate-200 font-mono">=</code>、<code class="text-slate-200 font-mono">|</code>、<code class="text-slate-200 font-mono">*</code>）與換行 <code class="text-slate-200 font-mono">endl</code>，可以在 Console 機印出結構完美的卡片框線。
-                </p>
-            </div>
-
-            <div class="border-t border-slate-700 pt-4 space-y-3">
-                <h2 class="font-bold text-white text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-bullseye text-emerald-400"></i> 名片輸出樣式標竿：
-                </h2>
-                <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 text-[11px] font-mono text-slate-300 space-y-1 leading-normal">
-                    <div>======================================</div>
-                    <div>|      創 作者 個人 資料 卡片      |</div>
-                    <div>======================================</div>
-                    <div>  創作者: TechGuru</div>
-                    <div>  訂閱數: 125000 人</div>
-                    <div>  發片量: 48 部</div>
-                    <div>  預估總流量: 2.16e+06 次觀看</div>
-                    <div>======================================</div>
-                </div>
-
-                <button onclick="toggleAnswer()" id="answer-btn" class="w-full py-2.5 bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/40 rounded-lg text-xs transition font-semibold flex items-center justify-center gap-2">
-                    <i class="fa-regular fa-lightbulb"></i> 切換參考解答
-                </button>
             </div>
 
             <div class="mt-auto pt-4 text-xs text-slate-500 border-t border-slate-700/50 flex justify-between items-center">
@@ -102,38 +64,44 @@
             </div>
         </aside>
 
-        <!-- 右側：編輯器與 Console -->
         <main class="flex-1 flex flex-col bg-slate-950">
-            <div class="flex-1 p-4 border-b border-slate-800 flex flex-col min-h-[320px]">
+            <div class="bg-slate-900 border-b border-slate-800 px-4 pt-2 flex space-x-2 overflow-x-auto text-xs font-mono">
+                <button onclick="switchTab('p1')" id="tab-p1" class="tab-btn px-3 py-2 rounded-t-lg bg-slate-800 text-purple-400 font-bold border-t-2 border-purple-400 flex items-center gap-1.5">
+                    <i class="fa-solid fa-address-card"></i> 專案 A: 創作者名片
+                </button>
+                <button onclick="switchTab('p2')" id="tab-p2" class="tab-btn px-3 py-2 rounded-t-lg bg-slate-900/50 text-slate-400 hover:text-slate-200 flex items-center gap-1.5">
+                    <i class="fa-solid fa-gamepad"></i> 專案 B: RPG 角色卡
+                </button>
+                <button onclick="switchTab('p3')" id="tab-p3" class="tab-btn px-3 py-2 rounded-t-lg bg-slate-900/50 text-slate-400 hover:text-slate-200 flex items-center gap-1.5">
+                    <i class="fa-solid fa-file-invoice-dollar"></i> 專案 C: 薪資結算表
+                </button>
+            </div>
+
+            <div class="flex-1 p-4 border-b border-slate-800 flex flex-col min-h-[300px]">
                 <div class="text-xs text-slate-400 mb-2 flex justify-between items-center">
-                    <span class="font-mono flex items-center gap-2">
-                        <i class="fa-regular fa-file-code text-blue-400"></i> main.cpp
-                    </span>
+                    <span id="tab-title" class="font-mono text-purple-300 font-bold">專案 A：YouTuber 頻道資料卡</span>
+                    <button id="toggle-ans-btn" onclick="toggleCurrentAnswer()" class="px-2 py-1 bg-amber-600/30 text-amber-300 border border-amber-500/40 rounded text-[11px]">切換參考解答</button>
                 </div>
                 <textarea id="code-editor" class="flex-1 bg-slate-900 text-slate-100 p-4 font-mono text-sm rounded-lg border border-slate-800 focus:outline-none focus:border-slate-600 resize-none leading-6 shadow-inner" spellcheck="false"></textarea>
             </div>
 
             <div class="p-3 bg-slate-900 border-b border-slate-800 flex items-center gap-3">
                 <label for="stdin-input" class="text-xs text-amber-400 font-mono font-bold whitespace-nowrap flex items-center gap-1.5">
-                    <i class="fa-solid fa-keyboard"></i> Stdin 輸入 (名稱 訂閱數 均觀數 發片量):
+                    <i class="fa-solid fa-keyboard"></i> Stdin 輸入資料:
                 </label>
-                <input type="text" id="stdin-input" placeholder="例：TechGuru 125000 45000 48" 
-                       oninput="updateStdinValue(this.value)"
-                       class="flex-1 bg-slate-950 border border-slate-700 rounded px-3 py-1 text-xs text-amber-200 focus:outline-none focus:border-amber-400 font-mono">
+                <input type="text" id="stdin-input" oninput="updateStdinValue(this.value)" class="flex-1 bg-slate-950 border border-slate-700 rounded px-3 py-1 text-xs text-amber-200 focus:outline-none focus:border-amber-400 font-mono">
             </div>
 
-            <div class="h-64 bg-slate-950 p-4 flex flex-col relative">
+            <div class="h-56 bg-slate-950 p-4 flex flex-col relative">
                 <div class="text-xs text-slate-400 mb-2 flex justify-between items-center">
                     <span class="font-mono flex items-center gap-2">
                         <i class="fa-solid fa-terminal text-emerald-400"></i> Console 終端機輸出
                     </span>
                     <button onclick="clearConsole()" class="text-xs text-slate-500 hover:text-slate-300 transition">清空終端機</button>
                 </div>
-                
                 <div id="console-output" class="flex-1 font-mono text-xs overflow-y-auto bg-slate-900/90 p-3 rounded-lg border border-slate-800 space-y-1">
-                    <span class="text-slate-500">// 點擊「執行程式 (Run)」產生名片...</span>
+                    <span class="text-slate-500">// 點擊「執行程式 (Run)」產出實作成果...</span>
                 </div>
-
                 <div id="cin-prompt-container" class="hidden absolute bottom-4 left-4 right-4 bg-slate-800/95 p-3 rounded-lg border border-amber-500/60 shadow-xl flex items-center gap-2 backdrop-blur">
                     <span class="text-xs text-amber-400 font-mono font-bold whitespace-nowrap">▶ 輸入資料:</span>
                     <input type="text" id="cin-input" onkeydown="handleCinSubmit(event)" class="flex-1 bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-xs text-amber-200 focus:outline-none focus:border-amber-400 font-mono">
@@ -145,95 +113,68 @@
 
     <script src="../assets/js/runner.js"></script>
     <script>
-        const defaultCode = `#include <iostream>
-#include <string>
-using namespace std;
-
-int main() {
-    string creatorName;
-    int subscriberCount;
-    double avgViews;
-    int videoCount;
-
-    // TODO 1: 讀取這 four 個變數資料 (提示：cin >> creatorName >> ...)
-    
-    // TODO 2: 計算總流量 totalViews (avgViews * videoCount)
-    double totalViews = 0;
-
-    // TODO 3: 排版印出名片
-    cout << "======================================" << endl;
-    cout << "|      創 作者 個人 資料 卡片      |" << endl;
-    cout << "======================================" << endl;
-    // 請繼續補全名片內文輸出...
-
-    return 0;
-}`;
-
-        const solutionCode = `#include <iostream>
-#include <string>
-using namespace std;
-
-int main() {
-    string creatorName;
-    int subscriberCount;
-    double avgViews;
-    int videoCount;
-
-    // 一次讀取多個參數
-    cin >> creatorName >> subscriberCount >> avgViews >> videoCount;
-
-    // 演算衍生資料
-    double totalViews = avgViews * videoCount;
-
-    // 美化名片輸出
-    cout << "======================================" << endl;
-    cout << "|      創 作者 個人 資料 卡片      |" << endl;
-    cout << "======================================" << endl;
-    cout << "  創作者: " << creatorName << endl;
-    cout << "  訂閱數: " << subscriberCount << " 人" << endl;
-    cout << "  發片量: " << videoCount << " 部" << endl;
-    cout << "  預估總流量: " << totalViews << " 次觀看" << endl;
-    cout << "======================================" << endl;
-
-    return 0;
-}`;
-
-        let showingSolution = false;
-
-        window.onload = () => {
-            document.getElementById('code-editor').value = defaultCode;
-            document.getElementById('stdin-input').value = "TechGuru 125000 45000 48";
-            window.currentStdin = "TechGuru 125000 45000 48";
+        const tabData = {
+            p1: {
+                title: "專案 A：YouTuber 頻道資料卡",
+                stdin: "TechGuru 120000 45000 50",
+                code: `// 讀取: 頻道名(string), 訂閱數(int), 均觀數(double), 影片數(int)\n// 計算: 總觀看數 = 均觀數 * 影片數\n#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string channel;\n    int subs, videos;\n    double avgViews;\n    \n    // TODO: 讀取與計算\n    \n    return 0;\n}`,
+                solution: `#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string channel;\n    int subs, videos;\n    double avgViews;\n    cin >> channel >> subs >> avgViews >> videos;\n    double totalViews = avgViews * videos;\n    cout << "===========================" << endl;\n    cout << "  頻道: " << channel << endl;\n    cout << "  訂閱: " << subs << " 人" << endl;\n    cout << "  總流量: " << totalViews << " 次" << endl;\n    cout << "===========================" << endl;\n    return 0;\n}`
+            },
+            p2: {
+                title: "專案 B：RPG 勇者英雄卡",
+                stdin: "Arthur 85 60",
+                code: `// 讀取: 英雄名字(string), 攻擊力(int), 防禦力(int)\n// 計算: 戰力評分 = 攻擊力 * 2.0 + 防禦力 * 1.5\n#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string hero;\n    int atk, def;\n    \n    // TODO: 請實作 Hero 卡片排版\n    \n    return 0;\n}`,
+                solution: `#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string hero;\n    int atk, def;\n    cin >> hero >> atk >> def;\n    double power = atk * 2.0 + def * 1.5;\n    cout << "⚔️ [英雄面板] " << hero << " ⚔️" << endl;\n    cout << "ATK: " << atk << " | DEF: " << def << endl;\n    cout << "綜合戰力指數: " << power << endl;\n    return 0;\n}`
+            },
+            p3: {
+                title: "專案 C：工程師薪資明細表",
+                stdin: "Alex 200 160 10",
+                code: `// 讀取: 名字(string), 時薪(double), 正常工時(int), 加班時薪(int)\n// 加班費為 時薪 * 1.5 * 加班時數\n#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string name;\n    double hourlyRate;\n    int hours, otHours;\n    \n    // TODO: 實作薪資明細計算\n    \n    return 0;\n}`,
+                solution: `#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string name;\n    double hourlyRate;\n    int hours, otHours;\n    cin >> name >> hourlyRate >> hours >> otHours;\n    double basePay = hourlyRate * hours;\n    double otPay = otHours * hourlyRate * 1.5;\n    double total = basePay + otPay;\n    cout << "員工: " << name << endl;\n    cout << "底薪: " << basePay << " | 加班費: " << otPay << endl;\n    cout << "總實領薪資: " << total << " 元" << endl;\n    return 0;\n}`
+            }
         };
 
-        function updateStdinValue(val) {
-            window.currentStdin = val;
-        }
+        let currentTabKey = "p1";
+        let showingSolution = false;
 
-        function handleStartRun() {
-            window.currentStdin = document.getElementById('stdin-input').value;
-            runCode();
-        }
+        window.onload = () => { switchTab('p1'); };
 
-        function resetCode() {
-            document.getElementById('code-editor').value = defaultCode;
-            document.getElementById('stdin-input').value = "TechGuru 125000 45000 48";
-            window.currentStdin = "TechGuru 125000 45000 48";
+        function switchTab(key) {
+            currentTabKey = key;
             showingSolution = false;
-            document.getElementById('answer-btn').innerHTML = `<i class="fa-regular fa-lightbulb"></i> 切換參考解答`;
+            const data = tabData[key];
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = "tab-btn px-3 py-2 rounded-t-lg bg-slate-900/50 text-slate-400 hover:text-slate-200 flex items-center gap-1.5";
+            });
+            document.getElementById(`tab-${key}`).className = "tab-btn active-tab px-3 py-2 rounded-t-lg bg-slate-800 text-purple-400 font-bold border-t-2 border-purple-400 flex items-center gap-1.5";
+
+            document.getElementById('tab-title').innerText = data.title;
+            document.getElementById('code-editor').value = data.code;
+            document.getElementById('stdin-input').value = data.stdin;
+            window.currentStdin = data.stdin;
+            document.getElementById('toggle-ans-btn').innerText = "切換參考解答";
             clearConsole();
         }
 
-        function toggleAnswer() {
+        function toggleCurrentAnswer() {
+            const data = tabData[currentTabKey];
+            showingSolution = !showingSolution;
+            const ansBtn = document.getElementById('toggle-ans-btn');
             if (showingSolution) {
-                document.getElementById('code-editor').value = defaultCode;
-                document.getElementById('answer-btn').innerHTML = `<i class="fa-regular fa-lightbulb"></i> 切換參考解答`;
-                showingSolution = false;
+                document.getElementById('code-editor').value = data.solution;
+                ansBtn.innerText = "切換回練習範本";
             } else {
-                document.getElementById('code-editor').value = solutionCode;
-                document.getElementById('answer-btn').innerHTML = `<i class="fa-solid fa-rotate-left"></i> 切換回練習範本`;
-                showingSolution = true;
+                document.getElementById('code-editor').value = data.code;
+                ansBtn.innerText = "切換參考解答";
             }
+        }
+
+        function resetCurrentTab() { switchTab(currentTabKey); }
+        function updateStdinValue(val) { window.currentStdin = val; }
+        function handleStartRun() {
+            window.currentStdin = document.getElementById('stdin-input').value;
+            runCode();
         }
     </script>
 </body>
