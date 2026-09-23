@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>第六課：條件判斷式 (if / else) - C++ 學習教室</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome 圖示 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
 
+    <!-- 頂部導覽列 -->
     <header class="bg-slate-800 px-6 py-3 flex items-center justify-between border-b border-slate-700 shadow-md">
         <div class="flex items-center space-x-4">
             <span class="text-blue-400 font-bold flex items-center gap-2 text-lg">
@@ -27,25 +30,43 @@
         </div>
     </header>
 
+    <!-- 主要內容區 -->
     <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
         
+        <!-- 左側詳細觀念教學 -->
         <aside class="w-full lg:w-[450px] bg-slate-800/80 p-6 border-r border-slate-700 flex flex-col overflow-y-auto space-y-6">
+            
             <div class="space-y-2">
-                <div class="inline-block bg-blue-500/20 text-blue-300 text-xs px-2.5 py-1 rounded-full font-semibold">Lesson 06</div>
+                <div class="inline-block bg-blue-500/20 text-blue-300 text-xs px-2.5 py-1 rounded-full font-semibold">
+                    Lesson 06
+                </div>
                 <h1 class="text-2xl font-bold text-white">條件判斷與邏輯分支</h1>
                 <p class="text-slate-300 text-sm leading-relaxed">
-                    條件判斷是程式邏輯的靈魂。右側提供 3 個觀摩範例與 3 個漸進實作題目。
+                    條件判斷讓程式具備「思考決策」的能力。右側提供 3 個觀摩範例與 3 個漸進實作題目。
                 </p>
             </div>
 
-            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700 space-y-2">
+            <!-- 觀念重點 -->
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700 space-y-3">
                 <h2 class="text-sm font-bold text-amber-400 flex items-center gap-2">
-                    <i class="fa-solid fa-bullseye"></i> 實作關卡簡介：
+                    <i class="fa-solid fa-code-compare"></i> 核心語法與坑點筆記：
+                </h2>
+                <ul class="list-disc list-inside text-xs text-slate-300 space-y-2 leading-relaxed">
+                    <li><strong class="text-white">比較運算子：</strong><code class="text-amber-300 font-mono">==</code> (等於)、<code class="text-amber-300 font-mono">!=</code> (不等於)、<code class="text-amber-300 font-mono">&gt;=</code>、<code class="text-amber-300 font-mono">&lt;=</code>。</li>
+                    <li><strong class="text-rose-400">極易犯錯：</strong><code class="text-amber-300 font-mono">if (x = 5)</code> 是把 5 賦值給 x，條件永遠成立！請一定要寫 <code class="text-emerald-400 font-mono">if (x == 5)</code>。</li>
+                    <li><strong class="text-white">邏輯運算子：</strong><code class="text-emerald-300 font-mono">&&</code> (AND，兩者皆真)、<code class="text-emerald-300 font-mono">||</code> (OR，任一為真)、<code class="text-emerald-300 font-mono">!</code> (NOT)。</li>
+                </ul>
+            </div>
+
+            <!-- 實作關卡導覽 -->
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700 space-y-2">
+                <h2 class="text-sm font-bold text-emerald-400 flex items-center gap-2">
+                    <i class="fa-solid fa-flag"></i> 實作關卡簡介：
                 </h2>
                 <div class="text-xs space-y-2 text-slate-300">
                     <div><strong class="text-amber-300">關卡 1：奇偶數判斷器</strong><br>利用 <code class="font-mono">% 2</code> 判斷整數奇偶。</div>
-                    <div><strong class="text-emerald-300">關卡 2：三數取最大值</strong><br>運用邏輯運算子 <code class="font-mono">&&</code> 找出最大數。</div>
-                    <div><strong class="text-rose-300">關卡 3：閏年判斷器 (綜合邏輯)</strong><br>西元年份除以 4、100、400 的條件分支。</div>
+                    <div><strong class="text-emerald-300">關卡 2：三數取最大值</strong><br>比較三個數值並找出最大者。</div>
+                    <div><strong class="text-rose-300">關卡 3：西元閏年判斷器</strong><br>組合 <code class="font-mono">&&</code> 與 <code class="font-mono">||</code> 完成複合邏輯判斷。</div>
                 </div>
             </div>
 
@@ -55,9 +76,12 @@
             </div>
         </aside>
 
+        <!-- 右側：編輯器與 Console -->
         <main class="flex-1 flex flex-col bg-slate-950">
+            
+            <!-- 頁籤導覽列 (Tabs Header) -->
             <div class="bg-slate-900 border-b border-slate-800 px-4 pt-2 flex space-x-2 overflow-x-auto text-xs font-mono">
-                <button onclick="switchTab('ex1')" id="tab-ex1" class="tab-btn px-3 py-2 rounded-t-lg bg-slate-800 text-blue-400 font-bold border-t-2 border-blue-400 flex items-center gap-1.5">
+                <button onclick="switchTab('ex1')" id="tab-ex1" class="tab-btn px-3 py-2 rounded-t-lg bg-slate-800 text-amber-400 font-bold border-t-2 border-amber-400 flex items-center gap-1.5">
                     <i class="fa-regular fa-file-code"></i> 範例1: 基本 if-else
                 </button>
                 <button onclick="switchTab('ex2')" id="tab-ex2" class="tab-btn px-3 py-2 rounded-t-lg bg-slate-900/50 text-slate-400 hover:text-slate-200 flex items-center gap-1.5">
@@ -77,6 +101,7 @@
                 </button>
             </div>
 
+            <!-- Code Editor 區域 -->
             <div class="flex-1 p-4 border-b border-slate-800 flex flex-col min-h-[300px]">
                 <div class="text-xs text-slate-400 mb-2 flex justify-between items-center">
                     <span id="tab-title" class="font-mono text-blue-300 font-bold">範例 1：基本 if - else 及格檢查</span>
@@ -85,6 +110,7 @@
                 <textarea id="code-editor" class="flex-1 bg-slate-900 text-slate-100 p-4 font-mono text-sm rounded-lg border border-slate-800 focus:outline-none focus:border-slate-600 resize-none leading-6 shadow-inner" spellcheck="false"></textarea>
             </div>
 
+            <!-- Stdin 輸入測試區 -->
             <div class="p-3 bg-slate-900 border-b border-slate-800 flex items-center gap-3">
                 <label for="stdin-input" class="text-xs text-amber-400 font-mono font-bold whitespace-nowrap flex items-center gap-1.5">
                     <i class="fa-solid fa-keyboard"></i> Stdin 輸入資料:
@@ -92,6 +118,7 @@
                 <input type="text" id="stdin-input" oninput="updateStdinValue(this.value)" class="flex-1 bg-slate-950 border border-slate-700 rounded px-3 py-1 text-xs text-amber-200 focus:outline-none focus:border-amber-400 font-mono">
             </div>
 
+            <!-- Console 終端機區域 -->
             <div class="h-56 bg-slate-950 p-4 flex flex-col relative">
                 <div class="text-xs text-slate-400 mb-2 flex justify-between items-center">
                     <span class="font-mono flex items-center gap-2">
@@ -100,7 +127,7 @@
                     <button onclick="clearConsole()" class="text-xs text-slate-500 hover:text-slate-300 transition">清空終端機</button>
                 </div>
                 <div id="console-output" class="flex-1 font-mono text-xs overflow-y-auto bg-slate-900/90 p-3 rounded-lg border border-slate-800 space-y-1">
-                    <span class="text-slate-500">// 點擊「執行程式 (Run)」進行測試...</span>
+                    <span class="text-slate-500">// 點擊「執行程式 (Run)」測試條件邏輯...</span>
                 </div>
                 <div id="cin-prompt-container" class="hidden absolute bottom-4 left-4 right-4 bg-slate-800/95 p-3 rounded-lg border border-amber-500/60 shadow-xl flex items-center gap-2 backdrop-blur">
                     <span class="text-xs text-amber-400 font-mono font-bold whitespace-nowrap">▶ 輸入資料:</span>
@@ -108,6 +135,7 @@
                     <button onclick="submitCinValue()" class="px-4 py-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded transition">送出</button>
                 </div>
             </div>
+
         </main>
     </div>
 
@@ -118,40 +146,40 @@
                 title: "範例 1：基本 if - else 及格檢查",
                 stdin: "75",
                 isQuiz: false,
-                code: `#include <iostream>\nusing namespace std;\n\nint main() {\n    int score;\n    cin >> score;\n    if (score >= 60) {\n        cout << "及格！" << endl;\n    } else {\n        cout << "不及格！" << endl;\n    }\n    return 0;\n}`
+                code: `// 範例 1：基本 if - else 判斷\n#include <iostream>\nusing namespace std;\n\nint main() {\n    int score;\n    cin >> score;\n    \n    if (score >= 60) {\n        cout << "成績: " << score << " 分 -> 及格！" << endl;\n    } else {\n        cout << "成績: " << score << " 分 -> 不及格！" << endl;\n    }\n    \n    return 0;\n}`
             },
             ex2: {
                 title: "範例 2：if - else if - else 多重等第判定",
                 stdin: "88",
                 isQuiz: false,
-                code: `#include <iostream>\nusing namespace std;\n\nint main() {\n    int score;\n    cin >> score;\n    if (score >= 90) cout << "A" << endl;\n    else if (score >= 80) cout << "B" << endl;\n    else if (score >= 70) cout << "C" << endl;\n    else cout << "F" << endl;\n    return 0;\n}`
+                code: `// 範例 2：多重條件分支\n#include <iostream>\nusing namespace std;\n\nint main() {\n    int score;\n    cin >> score;\n    \n    if (score >= 90) {\n        cout << "Grade: A (優秀)" << endl;\n    } else if (score >= 80) {\n        cout << "Grade: B (良好)" << endl;\n    } else if (score >= 60) {\n        cout << "Grade: C (及格)" << endl;\n    } else {\n        cout << "Grade: F (需要加油)" << endl;\n    }\n    \n    return 0;\n}`
             },
             ex3: {
                 title: "範例 3：邏輯運算子 && (AND) 與 || (OR)",
-                stdin: "25 1",
+                stdin: "20 1",
                 isQuiz: false,
-                code: `#include <iostream>\nusing namespace std;\n\nint main() {\n    int age;\n    bool hasTicket;\n    cin >> age >> hasTicket;\n    // 滿 18 歲 且 擁有門票\n    if (age >= 18 && hasTicket) {\n        cout << "准許入場" << endl;\n    } else {\n        cout << "不符資格" << endl;\n    }\n    return 0;\n}`
+                code: `// 範例 3：複合條件判斷\n#include <iostream>\nusing namespace std;\n\nint main() {\n    int age;\n    bool hasTicket;\n    cin >> age >> hasTicket;\n    \n    // 條件：滿 18 歲 且 擁有門票 (1 代表 true)\n    if (age >= 18 && hasTicket) {\n        cout << "入場資格核可：請進！" << endl;\n    } else {\n        cout << "入場資格不符！" << endl;\n    }\n    \n    return 0;\n}`
             },
             q1: {
-                title: "關卡 1：奇數與偶數判斷",
+                title: "關卡 1：奇數與偶數判斷器",
                 stdin: "7",
                 isQuiz: true,
-                code: `// TODO: 讀取一個整數 num，判斷並印出它是 "偶數" 還是 "奇數"\n#include <iostream>\nusing namespace std;\n\nint main() {\n    int num;\n    cin >> num;\n    // 請使用 num % 2 撰寫判斷\n    return 0;\n}`,
-                solution: `#include <iostream>\nusing namespace std;\n\nint main() {\n    int num;\n    cin >> num;\n    if (num % 2 == 0) {\n        cout << num << " 是偶數" << endl;\n    } else {\n        cout << num << " 是奇數" << endl;\n    }\n    return 0;\n}`
+                code: `// TODO: 讀取一個整數 num\n// 任務：判斷並印出它是 "偶數" 還是 "奇數"\n// 提示：使用 num % 2 == 0 判斷整除\n\n#include <iostream>\nusing namespace std;\n\nint main() {\n    int num;\n    cin >> num;\n    \n    // 請在此撰寫判斷邏輯\n    \n    return 0;\n}`,
+                solution: `#include <iostream>\nusing namespace std;\n\nint main() {\n    int num;\n    cin >> num;\n    \n    if (num % 2 == 0) {\n        cout << num << " 是偶數" << endl;\n    } else {\n        cout << num << " 是奇數" << endl;\n    }\n    \n    return 0;\n}`
             },
             q2: {
                 title: "關卡 2：三數找出最大值",
                 stdin: "15 42 28",
                 isQuiz: true,
-                code: `// TODO: 讀取三個數字 a, b, c，印出最大的那個數字\n#include <iostream>\nusing namespace std;\n\nint main() {\n    int a, b, c;\n    cin >> a >> b >> c;\n    // 請撰寫比較邏輯\n    return 0;\n}`,
-                solution: `#include <iostream>\nusing namespace std;\n\nint main() {\n    int a, b, c;\n    cin >> a >> b >> c;\n    int maxVal = a;\n    if (b > maxVal) maxVal = b;\n    if (c > maxVal) maxVal = c;\n    cout << "最大值是: " << maxVal << endl;\n    return 0;\n}`
+                code: `// TODO: 讀取三個整數 a, b, c\n// 任務：找出並印出三數中的最大值\n\n#include <iostream>\nusing namespace std;\n\nint main() {\n    int a, b, c;\n    cin >> a >> b >> c;\n    \n    // 請在此撰寫比較邏輯\n    \n    return 0;\n}`,
+                solution: `#include <iostream>\nusing namespace std;\n\nint main() {\n    int a, b, c;\n    cin >> a >> b >> c;\n    \n    int maxVal = a;\n    if (b > maxVal) {\n        maxVal = b;\n    }\n    if (c > maxVal) {\n        maxVal = c;\n    }\n    \n    cout << "最大值是: " << maxVal << endl;\n    return 0;\n}`
             },
             q3: {
                 title: "關卡 3：西元閏年判斷器",
                 stdin: "2024",
                 isQuiz: true,
-                code: `// TODO: 讀取年份 year\n// 閏年條件：能被 4 整除但不能被 100 整除，或是能被 400 整除\n#include <iostream>\nusing namespace std;\n\nint main() {\n    int year;\n    cin >> year;\n    // 請使用 (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)\n    return 0;\n}`,
-                solution: `#include <iostream>\nusing namespace std;\n\nint main() {\n    int year;\n    cin >> year;\n    if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) {\n        cout << year << " 年是閏年" << endl;\n    } else {\n        cout << year << " 年是平年" << endl;\n    }\n    return 0;\n}`
+                code: `// TODO: 讀取年份 year\n// 閏年規則：\n// 1. 能被 4 整除 但 不能被 100 整除\n// 2. 或者 能被 400 整除\n// 提示：(year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)\n\n#include <iostream>\nusing namespace std;\n\nint main() {\n    int year;\n    cin >> year;\n    \n    // 請在此撰寫閏年判斷邏輯\n    \n    return 0;\n}`,
+                solution: `#include <iostream>\nusing namespace std;\n\nint main() {\n    int year;\n    cin >> year;\n    \n    if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) {\n        cout << year << " 年是閏年" << endl;\n    } else {\n        cout << year << " 年是平年" << endl;\n    }\n    \n    return 0;\n}`
             }
         };
 
@@ -168,11 +196,15 @@
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.className = "tab-btn px-3 py-2 rounded-t-lg bg-slate-900/50 text-slate-400 hover:text-slate-200 flex items-center gap-1.5";
             });
-            document.getElementById(`tab-${key}`).className = "tab-btn active-tab px-3 py-2 rounded-t-lg bg-slate-800 text-amber-400 font-bold border-t-2 border-amber-400 flex items-center gap-1.5";
+            const activeBtn = document.getElementById(`tab-${key}`);
+            activeBtn.className = "tab-btn active-tab px-3 py-2 rounded-t-lg bg-slate-800 text-amber-400 font-bold border-t-2 border-amber-400 flex items-center gap-1.5";
 
             document.getElementById('tab-title').innerText = data.title;
             document.getElementById('code-editor').value = data.code;
-            document.getElementById('stdin-input').value = data.stdin;
+            
+            // 同步 DOM 與 全域變數
+            const stdinElem = document.getElementById('stdin-input');
+            stdinElem.value = data.stdin;
             window.currentStdin = data.stdin;
 
             const ansBtn = document.getElementById('toggle-ans-btn');
@@ -201,8 +233,10 @@
 
         function resetCurrentTab() { switchTab(currentTabKey); }
         function updateStdinValue(val) { window.currentStdin = val; }
+        
         function handleStartRun() {
-            window.currentStdin = document.getElementById('stdin-input').value;
+            const currentInputValue = document.getElementById('stdin-input').value;
+            window.currentStdin = currentInputValue;
             runCode();
         }
     </script>
