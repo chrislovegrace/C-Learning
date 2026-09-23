@@ -3,19 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>第五課：綜合實作 - 創作者名片產生器</title>
+    <title>第五課：綜合實作 - 創作者名片產生器 - C++ 學習教室</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome 圖示 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
 
+    <!-- 頂部導覽列 -->
     <header class="bg-slate-800 px-6 py-3 flex items-center justify-between border-b border-slate-700 shadow-md">
         <div class="flex items-center space-x-4">
             <span class="text-blue-400 font-bold flex items-center gap-2 text-lg">
                 <i class="fa-solid fa-code"></i> C++ 程式設計入門
             </span>
             <span class="text-slate-600">|</span>
-            <span class="text-white font-semibold">第五課：綜合實作 - 名片產生器</span>
+            <span class="text-white font-semibold">第五課：綜合實作 - 名片與數據產生器</span>
         </div>
         <div class="flex items-center gap-3">
             <button onclick="resetCurrentTab()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium rounded transition flex items-center gap-1">
@@ -27,35 +30,52 @@
         </div>
     </header>
 
+    <!-- 主要內容區 -->
     <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
         
+        <!-- 左側：詳細教學導覽 -->
         <aside class="w-full lg:w-[450px] bg-slate-800/80 p-6 border-r border-slate-700 flex flex-col overflow-y-auto space-y-6">
+            
             <div class="space-y-2">
-                <div class="inline-block bg-purple-500/20 text-purple-300 text-xs px-2.5 py-1 rounded-full font-semibold">Lesson 05 - Project</div>
-                <h1 class="text-2xl font-bold text-white">綜合實作關卡選單</h1>
+                <div class="inline-block bg-purple-500/20 text-purple-300 text-xs px-2.5 py-1 rounded-full font-semibold">
+                    Lesson 05 - Mini Project
+                </div>
+                <h1 class="text-2xl font-bold text-white">綜合實作：資訊卡片產出器</h1>
                 <p class="text-slate-300 text-sm leading-relaxed">
-                    本課綜合前四課知識：變數、資料型態、運算式與 <code class="text-amber-300 font-mono">cin / cout</code>，選擇下方不同專案進行練習。
+                    本課將綜合運用 <code class="text-purple-300 font-mono">string</code>、<code class="text-blue-300 font-mono">int</code>、<code class="text-emerald-300 font-mono">double</code>、算術公式、<code class="text-amber-300 font-mono">cin</code> 與 <code class="text-amber-300 font-mono">cout</code> 美化排版。
                 </p>
             </div>
 
-            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700 space-y-2">
+            <!-- 專案需求與語法重點 -->
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700 space-y-3">
                 <h2 class="text-sm font-bold text-purple-400 flex items-center gap-2">
-                    <i class="fa-solid fa-layer-group"></i> 專案任務清單：
+                    <i class="fa-solid fa-layer-group"></i> 本課三大情境專案：
                 </h2>
                 <div class="text-xs space-y-2 text-slate-300">
-                    <div>
-                        <strong class="text-amber-300">專案 A：YouTuber 頻道卡</strong><br>
-                        計算頻道總觀看數與平均每部發片產量。
+                    <div class="border-l-2 border-purple-500 pl-2">
+                        <strong class="text-purple-300">專案 A：YouTuber 頻道卡</strong><br>
+                        讀取頻道名稱、訂閱數、影片均觀數與總影片數，計算總流量。
                     </div>
-                    <div>
-                        <strong class="text-emerald-300">專案 B：RPG 勇者英雄卡</strong><br>
-                        計算角色戰力值 (攻擊*2 + 防禦*1.5) 與勝率。
+                    <div class="border-l-2 border-blue-500 pl-2">
+                        <strong class="text-blue-300">專案 B：RPG 勇者英雄卡</strong><br>
+                        讀取英雄稱號、攻擊力、防禦力，使用加權公式計算綜合戰力。
                     </div>
-                    <div>
-                        <strong class="text-rose-300">專案 C：工程師薪資收據</strong><br>
-                        計算時薪、加班費與扣除勞健保後的淨收入。
+                    <div class="border-l-2 border-emerald-500 pl-2">
+                        <strong class="text-emerald-300">專案 C：工程師薪資結算單</strong><br>
+                        讀取員工姓名、時薪、正常工時與加班時數，計算加班費與總薪資。
                     </div>
                 </div>
+            </div>
+
+            <!-- 排版小技巧 -->
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700 space-y-2">
+                <h2 class="text-sm font-bold text-amber-400 flex items-center gap-2">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> 💡 排版與算式筆記：
+                </h2>
+                <ul class="list-disc list-inside text-xs text-slate-300 space-y-1.5">
+                    <li><strong class="text-white">資料對齊：</strong>善用 <code class="text-amber-300 font-mono">=</code>、<code class="text-amber-300 font-mono">|</code>、<code class="text-amber-300 font-mono">*</code> 等 ASCII 符號劃分框線。</li>
+                    <li><strong class="text-white">浮點數加權：</strong>乘以帶有小數點的係數（如 <code class="text-emerald-300 font-mono">* 1.5</code>）可確保精度升級。</li>
+                </ul>
             </div>
 
             <div class="mt-auto pt-4 text-xs text-slate-500 border-t border-slate-700/50 flex justify-between items-center">
@@ -64,19 +84,23 @@
             </div>
         </aside>
 
+        <!-- 右側：編輯器與 Console -->
         <main class="flex-1 flex flex-col bg-slate-950">
+            
+            <!-- 頁籤導覽列 (Tabs Header) -->
             <div class="bg-slate-900 border-b border-slate-800 px-4 pt-2 flex space-x-2 overflow-x-auto text-xs font-mono">
                 <button onclick="switchTab('p1')" id="tab-p1" class="tab-btn px-3 py-2 rounded-t-lg bg-slate-800 text-purple-400 font-bold border-t-2 border-purple-400 flex items-center gap-1.5">
-                    <i class="fa-solid fa-address-card"></i> 專案 A: 創作者名片
+                    <i class="fa-solid fa-address-card"></i> 專案 A: YouTuber 頻道卡
                 </button>
                 <button onclick="switchTab('p2')" id="tab-p2" class="tab-btn px-3 py-2 rounded-t-lg bg-slate-900/50 text-slate-400 hover:text-slate-200 flex items-center gap-1.5">
-                    <i class="fa-solid fa-gamepad"></i> 專案 B: RPG 角色卡
+                    <i class="fa-solid fa-gamepad"></i> 專案 B: RPG 勇者卡
                 </button>
                 <button onclick="switchTab('p3')" id="tab-p3" class="tab-btn px-3 py-2 rounded-t-lg bg-slate-900/50 text-slate-400 hover:text-slate-200 flex items-center gap-1.5">
                     <i class="fa-solid fa-file-invoice-dollar"></i> 專案 C: 薪資結算表
                 </button>
             </div>
 
+            <!-- Code Editor 區域 -->
             <div class="flex-1 p-4 border-b border-slate-800 flex flex-col min-h-[300px]">
                 <div class="text-xs text-slate-400 mb-2 flex justify-between items-center">
                     <span id="tab-title" class="font-mono text-purple-300 font-bold">專案 A：YouTuber 頻道資料卡</span>
@@ -85,6 +109,7 @@
                 <textarea id="code-editor" class="flex-1 bg-slate-900 text-slate-100 p-4 font-mono text-sm rounded-lg border border-slate-800 focus:outline-none focus:border-slate-600 resize-none leading-6 shadow-inner" spellcheck="false"></textarea>
             </div>
 
+            <!-- Stdin 輸入測試區 -->
             <div class="p-3 bg-slate-900 border-b border-slate-800 flex items-center gap-3">
                 <label for="stdin-input" class="text-xs text-amber-400 font-mono font-bold whitespace-nowrap flex items-center gap-1.5">
                     <i class="fa-solid fa-keyboard"></i> Stdin 輸入資料:
@@ -92,6 +117,7 @@
                 <input type="text" id="stdin-input" oninput="updateStdinValue(this.value)" class="flex-1 bg-slate-950 border border-slate-700 rounded px-3 py-1 text-xs text-amber-200 focus:outline-none focus:border-amber-400 font-mono">
             </div>
 
+            <!-- Console 終端機區域 -->
             <div class="h-56 bg-slate-950 p-4 flex flex-col relative">
                 <div class="text-xs text-slate-400 mb-2 flex justify-between items-center">
                     <span class="font-mono flex items-center gap-2">
@@ -100,7 +126,7 @@
                     <button onclick="clearConsole()" class="text-xs text-slate-500 hover:text-slate-300 transition">清空終端機</button>
                 </div>
                 <div id="console-output" class="flex-1 font-mono text-xs overflow-y-auto bg-slate-900/90 p-3 rounded-lg border border-slate-800 space-y-1">
-                    <span class="text-slate-500">// 點擊「執行程式 (Run)」產出實作成果...</span>
+                    <span class="text-slate-500">// 點擊「執行程式 (Run)」觀察名片輸出結果...</span>
                 </div>
                 <div id="cin-prompt-container" class="hidden absolute bottom-4 left-4 right-4 bg-slate-800/95 p-3 rounded-lg border border-amber-500/60 shadow-xl flex items-center gap-2 backdrop-blur">
                     <span class="text-xs text-amber-400 font-mono font-bold whitespace-nowrap">▶ 輸入資料:</span>
@@ -108,6 +134,7 @@
                     <button onclick="submitCinValue()" class="px-4 py-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded transition">送出</button>
                 </div>
             </div>
+
         </main>
     </div>
 
@@ -116,21 +143,164 @@
         const tabData = {
             p1: {
                 title: "專案 A：YouTuber 頻道資料卡",
-                stdin: "TechGuru 120000 45000 50",
-                code: `// 讀取: 頻道名(string), 訂閱數(int), 均觀數(double), 影片數(int)\n// 計算: 總觀看數 = 均觀數 * 影片數\n#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string channel;\n    int subs, videos;\n    double avgViews;\n    \n    // TODO: 讀取與計算\n    \n    return 0;\n}`,
-                solution: `#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string channel;\n    int subs, videos;\n    double avgViews;\n    cin >> channel >> subs >> avgViews >> videos;\n    double totalViews = avgViews * videos;\n    cout << "===========================" << endl;\n    cout << "  頻道: " << channel << endl;\n    cout << "  訂閱: " << subs << " 人" << endl;\n    cout << "  總流量: " << totalViews << " 次" << endl;\n    cout << "===========================" << endl;\n    return 0;\n}`
+                stdin: "TechGuru 125000 45000.5 48",
+                code: `// TODO: 請依次讀取 4 個資料項目：
+// 1. 頻道名稱 (string channelName)
+// 2. 訂閱人數 (int subscriberCount)
+// 3. 每部影片平均觀看數 (double avgViews)
+// 4. 總發布影片數 (int videoCount)
+// 任務：計算預估總流量 totalViews (avgViews * videoCount)，並排版輸出名片
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    string channelName;
+    int subscriberCount;
+    double avgViews;
+    int videoCount;
+
+    // 請在此寫 cin 讀取
+    
+    // 計算總流量
+    double totalViews = 0.0;
+
+    // 排版輸出名片
+    cout << "=======================================" << endl;
+    cout << "|      創 作者 個人 資料 卡片       |" << endl;
+    cout << "=======================================" << endl;
+    cout << "  頻道: " << channelName << endl;
+    cout << "  訂閱: " << subscriberCount << " 人" << endl;
+    cout << "  發片: " << videoCount << " 部" << endl;
+    cout << "  預估總流量: " << totalViews << " 次" << endl;
+    cout << "=======================================" << endl;
+
+    return 0;
+}`,
+                solution: `#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    string channelName;
+    int subscriberCount;
+    double avgViews;
+    int videoCount;
+
+    // 一次鏈式讀取 4 個欄位
+    cin >> channelName >> subscriberCount >> avgViews >> videoCount;
+
+    // 演算衍生資料
+    double totalViews = avgViews * videoCount;
+
+    // 美化名片輸出
+    cout << "=======================================" << endl;
+    cout << "|      創 作者 個人 資料 卡片       |" << endl;
+    cout << "=======================================" << endl;
+    cout << "  頻道: " << channelName << endl;
+    cout << "  訂閱: " << subscriberCount << " 人" << endl;
+    cout << "  發片: " << videoCount << " 部" << endl;
+    cout << "  預估總流量: " << totalViews << " 次" << endl;
+    cout << "=======================================" << endl;
+
+    return 0;
+}`
             },
             p2: {
-                title: "專案 B：RPG 勇者英雄卡",
+                title: "專案 B：RPG 勇者英雄面板",
                 stdin: "Arthur 85 60",
-                code: `// 讀取: 英雄名字(string), 攻擊力(int), 防禦力(int)\n// 計算: 戰力評分 = 攻擊力 * 2.0 + 防禦力 * 1.5\n#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string hero;\n    int atk, def;\n    \n    // TODO: 請實作 Hero 卡片排版\n    \n    return 0;\n}`,
-                solution: `#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string hero;\n    int atk, def;\n    cin >> hero >> atk >> def;\n    double power = atk * 2.0 + def * 1.5;\n    cout << "⚔️ [英雄面板] " << hero << " ⚔️" << endl;\n    cout << "ATK: " << atk << " | DEF: " << def << endl;\n    cout << "綜合戰力指數: " << power << endl;\n    return 0;\n}`
+                code: `// TODO: 讀取 3 個欄位：
+// 1. 英雄名字 (string heroName)
+// 2. 基礎基礎攻擊力 (int atk)
+// 3. 基礎防禦力 (int def)
+// 任務：計算綜合戰力指數 power = (atk * 2.0) + (def * 1.5)
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    string heroName;
+    int atk, def;
+
+    // 請在下方編寫 cin 與戰力計算
+    
+    return 0;
+}`,
+                solution: `#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    string heroName;
+    int atk, def;
+
+    cin >> heroName >> atk >> def;
+
+    // 計算加權戰力
+    double power = (atk * 2.0) + (def * 1.5);
+
+    cout << "⚔️ [英雄面板] " << heroName << " ⚔️" << endl;
+    cout << "-------------------------------" << endl;
+    cout << " 基礎攻擊 (ATK) : " << atk << endl;
+    cout << " 基礎防禦 (DEF) : " << def << endl;
+    cout << " 綜合戰力指數   : " << power << endl;
+    cout << "-------------------------------" << endl;
+
+    return 0;
+}`
             },
             p3: {
-                title: "專案 C：工程師薪資明細表",
-                stdin: "Alex 200 160 10",
-                code: `// 讀取: 名字(string), 時薪(double), 正常工時(int), 加班時薪(int)\n// 加班費為 時薪 * 1.5 * 加班時數\n#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string name;\n    double hourlyRate;\n    int hours, otHours;\n    \n    // TODO: 實作薪資明細計算\n    \n    return 0;\n}`,
-                solution: `#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string name;\n    double hourlyRate;\n    int hours, otHours;\n    cin >> name >> hourlyRate >> hours >> otHours;\n    double basePay = hourlyRate * hours;\n    double otPay = otHours * hourlyRate * 1.5;\n    double total = basePay + otPay;\n    cout << "員工: " << name << endl;\n    cout << "底薪: " << basePay << " | 加班費: " << otPay << endl;\n    cout << "總實領薪資: " << total << " 元" << endl;\n    return 0;\n}`
+                title: "專案 C：工程師月度薪資單",
+                stdin: "Alex 250.0 160 12",
+                code: `// TODO: 讀取 4 個欄位：
+// 1. 員工姓名 (string empName)
+// 2. 時薪 (double hourlyRate)
+// 3. 本月正常工時 (int normalHours)
+// 4. 加班時數 (int otHours)
+// 任務：
+// 1. 計算基本底薪 baseSalary = hourlyRate * normalHours
+// 2. 計算加班費 otSalary = otHours * hourlyRate * 1.5
+// 3. 總薪資 totalSalary = baseSalary + otSalary
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    string empName;
+    double hourlyRate;
+    int normalHours, otHours;
+
+    // 請撰寫薪資計算與排版
+    
+    return 0;
+}`,
+                solution: `#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    string empName;
+    double hourlyRate;
+    int normalHours, otHours;
+
+    cin >> empName >> hourlyRate >> normalHours >> otHours;
+
+    double baseSalary = hourlyRate * normalHours;
+    double otSalary = otHours * hourlyRate * 1.5;
+    double totalSalary = baseSalary + otSalary;
+
+    cout << "📄 === [ 員工薪資結算明細 ] ===" << endl;
+    cout << " 員工姓名 : " << empName << endl;
+    cout << " 基本底薪 : " << baseSalary << " 元" << endl;
+    cout << " 加班津貼 : " << otSalary << " 元 (1.5倍計算)" << endl;
+    cout << " ------------------------------" << endl;
+    cout << " 本月實領 : " << totalSalary << " 元" << endl;
+
+    return 0;
+}`
             }
         };
 
@@ -147,12 +317,17 @@
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.className = "tab-btn px-3 py-2 rounded-t-lg bg-slate-900/50 text-slate-400 hover:text-slate-200 flex items-center gap-1.5";
             });
-            document.getElementById(`tab-${key}`).className = "tab-btn active-tab px-3 py-2 rounded-t-lg bg-slate-800 text-purple-400 font-bold border-t-2 border-purple-400 flex items-center gap-1.5";
+            const activeBtn = document.getElementById(`tab-${key}`);
+            activeBtn.className = "tab-btn active-tab px-3 py-2 rounded-t-lg bg-slate-800 text-purple-400 font-bold border-t-2 border-purple-400 flex items-center gap-1.5";
 
             document.getElementById('tab-title').innerText = data.title;
             document.getElementById('code-editor').value = data.code;
-            document.getElementById('stdin-input').value = data.stdin;
+            
+            // 同步寫入 DOM 與 全域變數
+            const stdinElem = document.getElementById('stdin-input');
+            stdinElem.value = data.stdin;
             window.currentStdin = data.stdin;
+
             document.getElementById('toggle-ans-btn').innerText = "切換參考解答";
             clearConsole();
         }
@@ -172,8 +347,10 @@
 
         function resetCurrentTab() { switchTab(currentTabKey); }
         function updateStdinValue(val) { window.currentStdin = val; }
+        
         function handleStartRun() {
-            window.currentStdin = document.getElementById('stdin-input').value;
+            const currentInputValue = document.getElementById('stdin-input').value;
+            window.currentStdin = currentInputValue;
             runCode();
         }
     </script>
