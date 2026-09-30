@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第七課：迴圈 (while / for) - C++ 學習教室</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
+
+    <header class="bg-slate-800 px-6 py-3 flex items-center justify-between border-b border-slate-700 shadow-md">
+        <div class="flex items-center space-x-4">
+            <span class="text-blue-400 font-bold flex items-center gap-2 text-lg">
+                <i class="fa-solid fa-code"></i> C++ 程式設計入門
+            </span>
+            <span class="text-slate-600">|</span>
+            <span class="text-white font-semibold">第七課：迴圈 while / for / do-while</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="resetCurrentTab()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium rounded transition flex items-center gap-1">
+                <i class="fa-solid fa-rotate-left"></i> 重置頁籤
+            </button>
+            <button onclick="handleStartRun()" class="px-5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm rounded shadow transition flex items-center gap-2">
+                <i class="fa-solid fa-play"></i> 執行程式 (Run)
+            </button>
+        </div>
+    </header>
+
+    <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+
+        <aside class="w-full lg:w-[450px] bg-slate-800/80 p-6 border-r border-slate-700 flex flex-col overflow-y-auto space-y-6">
+
+            <div class="space-y-2">
+                <div class="inline-block bg-blue-500/20 text-blue-300 text-xs px-2.5 py-1 rounded-full font-semibold">Lesson 07</div>
+                <h1 class="text-2xl font-bold text-white">迴圈：讓程式重複做事</h1>
+                <p class="text-slate-300 text-sm leading-relaxed">
+                    <code class="font-mono text-amber-300">if</code> 是判斷「一次」，迴圈則是「只要條件成立，就一直重複」。右側有 3 個觀摩範例與 3 個漸進實作題目。
+                </p>
+            </div>
+
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700 space-y-3">
+                <h2 class="text-sm font-bold text-amber-400 flex items-center gap-2">
+                    <i class="fa-solid fa-rotate"></i> 三種迴圈語法：
+                </h2>
+                <ul class="list-disc list-inside text-xs text-slate-300 space-y-2 leading-relaxed">
+                    <li><strong class="text-white">while：</strong><code class="text-emerald-300 font-mono">while (條件) { ... }</code>　先判斷再執行，適合「不知道要跑幾次」。</li>
+                    <li><strong class="text-white">for：</strong><code class="text-emerald-300 font-mono">for (初始; 條件; 更新) { ... }</code>　適合「已知次數」。</li>
+                    <li><strong class="text-white">do-while：</strong><code class="text-emerald-300 font-mono">do { ... } while (條件);</code>　先執行一次再判斷，結尾有分號。</li>
+                    <li><strong class="text-white">break / continue：</strong>break 跳出整個迴圈；continue 跳過本輪、進入下一輪。</li>
+                </ul>
+            </div>
+
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700 space-y-3">
+                <h2 class="text-sm font-bold text-rose-400 flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation"></i> 常見坑點：
+                </h2>
+                <ul class="list-disc list-inside text-xs text-slate-300 space-y-2 leading-relaxed">
+                    <li><strong class="text-rose-400">無窮迴圈：</strong>忘了更新變數（如漏寫 <code class="text-amber-300 font-mono">i++</code>），條件永遠成立，程式停不下來。</li>
+                    <li><strong class="text-rose-400">多餘分號：</strong><code class="text-amber-300 font-mono">for (...);</code> 後面的分號會讓迴圈本體變成空的。</li>
+                    <li><strong class="text-rose-400">差一錯誤：</strong><code class="text-amber-300 font-mono">i &lt; 5</code> 跑 5 次 (0~4)，<code class="text-amber-300 font-mono">i &lt;= 5</code> 跑 6 次，邊界要想清楚。</li>
+                </ul>
+            </div>
+
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700 space-y-2">
+                <h2 class="text-sm font-bold text-emerald-400 flex items-center gap-2">
+                    <i class="fa-solid fa-flag"></i> 實作關卡簡介：
+                </h2>
+                <div class="text-xs space-y-2 text-slate-300">
+                    <div><strong class="text-amber-300">關卡 1：1 加到 n</strong><br>用 <code class="font-mono">for</code> 累加求總和。</div>
+                    <div><strong class="text-emerald-300">關卡 2：九九乘法表</strong><br>巢狀迴圈，外層控制列、內層控制欄。</div>
+                    <div><strong class="text-rose-300">關卡 3：猜數字遊戲</strong><br>結合 <code class="font-mono">while</code> 與 <code class="font-mono">if</code>，猜對才結束。</div>
+                </div>
+            </div>
+
+            <div class="mt-auto pt-4 text-xs text-slate-500 border-t border-slate-700/50 flex justify-between items-center">
+                <span>執行引擎：Judge0 Cloud GCC 9.2.0</span>
+                <span class="font-mono">C++17</span>
+            </div>
+        </aside>
+
+        <main class="flex-1 flex flex-col bg-slate-950">
+
+            <div class="bg-slate-900 border-b border-slate-800 px-4 pt-2 flex space-x-2 overflow-x-auto text-xs font-mono">
+                <button onclick="switchTab('ex1')" id="tab-ex1" class="tab-btn px-3 py-2 rounded-t-lg bg-slate-800 text-amber-400 font-bold border-t-2 border-amber-400 flex items-center gap-1.5">
+                    <i class="fa-regular fa-file-code"></i> 範例1: while 倒數
+                </button>
+                <button onclick="switchTab('ex2')" id="tab-ex2" class="tab-btn px-3 py-2 rounded-t-lg bg-slate-900/50 text-slate-400 hover:text-slate-200 flex items-center gap-1.5">
+                    <i class="fa-regular fa-file-code"></i> 範例2: for 與 break/continue
+                </button>
+                <button onclick="switchTab('ex3')" id="tab-ex3" class="tab-btn px-3 py-2 rounded-t-lg bg-slate-900/50 text-slate-400 hover:text-slate-200 flex items-center gap-1.5">
+                    <i class="fa-regular fa-file-code"></i> 範例3: 巢狀迴圈
+                </button>
+                <button onclick="switchTab('q1')" id="tab-q1" class="tab-btn px-3 py-2 rounded-t-lg bg-slate-900/50 text-amber-400 hover:text-amber-300 flex items-center gap-1.5">
+                    <i class="fa-solid fa-pen-to-square"></i> 關卡1: 累加求和
+                </button>
+                <button onclick="switchTab('q2')" id="tab-q2" class="tab-btn px-3 py-2 rounded-t-lg bg-slate-900/50 text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5">
+                    <i class="fa-solid fa-pen-to-square"></i> 關卡2: 九九乘法表
+                </button>
+                <button onclick="switchTab('q3')" id="tab-q3" class="tab-btn px-3 py-2 rounded-t-lg bg-slate-900/50 text-rose-400 hover:text-rose-300 flex items-center gap-1.5">
+                    <i class="fa-solid fa-pen-to-square"></i> 關卡3: 猜數字
+                </button>
+            </div>
+
+            <div class="flex-1 p-4 border-b border-slate-800 flex flex-col min-h-[300px]">
+                <div class="text-xs text-slate-400 mb-2 flex justify-between items-center">
+                    <span id="tab-title" class="font-mono text-blue-300 font-bold"></span>
+                    <button id="toggle-ans-btn" onclick="toggleCurrentAnswer()" class="hidden px-2 py-1 bg-amber-600/30 text-amber-300 border border-amber-500/40 rounded text-[11px]">切換參考解答</button>
+                </div>
+                <textarea id="code-editor" class="flex-1 bg-slate-900 text-slate-100 p-4 font-mono text-sm rounded-lg border border-slate-800 focus:outline-none focus:border-slate-600 resize-none leading-6 shadow-inner" spellcheck="false"></textarea>
+            </div>
+
+            <div class="p-3 bg-slate-900 border-b border-slate-800 flex items-center gap-3">
+                <label for="stdin-input" class="text-xs text-amber-400 font-mono font-bold whitespace-nowrap flex items-center gap-1.5">
+                    <i class="fa-solid fa-keyboard"></i> Stdin 輸入資料:
+                </label>
+                <input type="text" id="stdin-input" oninput="updateStdinValue(this.value)" class="flex-1 bg-slate-950 border border-slate-700 rounded px-3 py-1 text-xs text-amber-200 focus:outline-none focus:border-amber-400 font-mono">
+            </div>
+
+            <div class="h-56 bg-slate-950 p-4 flex flex-col relative">
+                <div class="text-xs text-slate-400 mb-2 flex justify-between items-center">
+                    <span class="font-mono flex items-center gap-2">
+                        <i class="fa-solid fa-terminal text-emerald-400"></i> Console 終端機輸出
+                    </span>
+                    <button onclick="clearConsole()" class="text-xs text-slate-500 hover:text-slate-300 transition">清空終端機</button>
+                </div>
+                <div id="console-output" class="flex-1 font-mono text-xs overflow-y-auto bg-slate-900/90 p-3 rounded-lg border border-slate-800 space-y-1">
+                    <span class="text-slate-500">// 點擊「執行程式 (Run)」測試迴圈邏輯...</span>
+                </div>
+                <div id="cin-prompt-container" class="hidden absolute bottom-4 left-4 right-4 bg-slate-800/95 p-3 rounded-lg border border-amber-500/60 shadow-xl flex items-center gap-2 backdrop-blur">
+                    <span class="text-xs text-amber-400 font-mono font-bold whitespace-nowrap">▶ 輸入資料:</span>
+                    <input type="text" id="cin-input" onkeydown="handleCinSubmit(event)" class="flex-1 bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-xs text-amber-200 focus:outline-none focus:border-amber-400 font-mono">
+                    <button onclick="submitCinValue()" class="px-4 py-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded transition">送出</button>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="../assets/js/runner.js"></script>
+    <script>
+        const tabData = {
+            ex1: {
+                title: "範例 1：while 迴圈倒數計時",
+                stdin: "5",
+                isQuiz: false,
+                code: `// 範例 1：while 迴圈\n// 只要條件成立就重複執行，記得在迴圈內更新變數！\n#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    \n    while (n > 0) {\n        cout << n << "..." << endl;\n        n--;   // 沒有這行就會變成無窮迴圈\n    }\n    cout << "發射！" << endl;\n    \n    return 0;\n}`
+            },
+            ex2: {
+                title: "範例 2：for 迴圈搭配 continue 與 break",
+                stdin: "",
+                isQuiz: false,
+                code: `// 範例 2：for + continue + break\n#include <iostream>\nusing namespace std;\n\nint main() {\n    for (int i = 1; i <= 10; i++) {\n        if (i % 2 == 0) {\n            continue;   // 偶數：跳過本輪\n        }\n        if (i > 7) {\n            break;      // 超過 7：直接結束迴圈\n        }\n        cout << "i = " << i << endl;\n    }\n    \n    return 0;\n}`
+            },
+            ex3: {
+                title: "範例 3：巢狀迴圈印出星星三角形",
+                stdin: "5",
+                isQuiz: false,
+                code: `// 範例 3：巢狀迴圈\n// 外層控制「第幾列」，內層控制「該列印幾顆」\n#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    \n    for (int row = 1; row <= n; row++) {\n        for (int col = 1; col <= row; col++) {\n            cout << "*";\n        }\n        cout << endl;   // 每列結束換行\n    }\n    \n    return 0;\n}`
+            },
+            q1: {
+                title: "關卡 1：計算 1 + 2 + ... + n",
+                stdin: "10",
+                isQuiz: true,
+                code: `// TODO: 讀取正整數 n\n// 任務：用 for 迴圈計算 1 + 2 + ... + n 並印出總和\n// 提示：先宣告 int sum = 0; 再逐次累加\n\n#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    \n    // 請在此撰寫迴圈\n    \n    return 0;\n}`,
+                solution: `#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    \n    int sum = 0;\n    for (int i = 1; i <= n; i++) {\n        sum += i;\n    }\n    \n    cout << "1 到 " << n << " 的總和是: " << sum << endl;\n    return 0;\n}`
+            },
+            q2: {
+                title: "關卡 2：九九乘法表 (巢狀迴圈)",
+                stdin: "",
+                isQuiz: true,
+                code: `// TODO: 印出九九乘法表\n// 格式範例：1 x 1 = 1\n// 提示：外層 i 從 1 到 9，內層 j 從 1 到 9\n\n#include <iostream>\nusing namespace std;\n\nint main() {\n    // 請在此撰寫巢狀迴圈\n    \n    return 0;\n}`,
+                solution: `#include <iostream>\nusing namespace std;\n\nint main() {\n    for (int i = 1; i <= 9; i++) {\n        for (int j = 1; j <= 9; j++) {\n            cout << i << " x " << j << " = " << i * j << "\\t";\n        }\n        cout << endl;\n    }\n    \n    return 0;\n}`
+            },
+            q3: {
+                title: "關卡 3：猜數字遊戲",
+                stdin: "50 30 42",
+                isQuiz: true,
+                code: `// TODO: 答案固定是 42，程式會依序讀入玩家的猜測\n// 任務：猜太大印 "太大了"，猜太小印 "太小了"，猜對印 "答對了！" 並結束\n// 提示：while (cin >> guess) 會一直讀到沒有資料為止\n\n#include <iostream>\nusing namespace std;\n\nint main() {\n    int answer = 42;\n    int guess;\n    \n    // 請在此撰寫迴圈與判斷\n    \n    return 0;\n}`,
+                solution: `#include <iostream>\nusing namespace std;\n\nint main() {\n    int answer = 42;\n    int guess;\n    \n    while (cin >> guess) {\n        if (guess > answer) {\n            cout << guess << " 太大了" << endl;\n        } else if (guess < answer) {\n            cout << guess << " 太小了" << endl;\n        } else {\n            cout << guess << " 答對了！" << endl;\n            break;\n        }\n    }\n    \n    return 0;\n}`
+            }
+        };
+
+        let currentTabKey = "ex1";
+        let showingSolution = false;
+
+        window.onload = () => { switchTab('ex1'); };
+
+        function switchTab(key) {
+            currentTabKey = key;
+            showingSolution = false;
+            const data = tabData[key];
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = "tab-btn px-3 py-2 rounded-t-lg bg-slate-900/50 text-slate-400 hover:text-slate-200 flex items-center gap-1.5";
+            });
+            const activeBtn = document.getElementById(`tab-${key}`);
+            activeBtn.className = "tab-btn active-tab px-3 py-2 rounded-t-lg bg-slate-800 text-amber-400 font-bold border-t-2 border-amber-400 flex items-center gap-1.5";
+
+            document.getElementById('tab-title').innerText = data.title;
+            document.getElementById('code-editor').value = data.code;
+
+            const stdinElem = document.getElementById('stdin-input');
+            stdinElem.value = data.stdin;
+            window.currentStdin = data.stdin;
+
+            const ansBtn = document.getElementById('toggle-ans-btn');
+            if (data.isQuiz) {
+                ansBtn.classList.remove('hidden');
+                ansBtn.innerText = "切換參考解答";
+            } else {
+                ansBtn.classList.add('hidden');
+            }
+            clearConsole();
+        }
+
+        function toggleCurrentAnswer() {
+            const data = tabData[currentTabKey];
+            if (!data.isQuiz) return;
+            showingSolution = !showingSolution;
+            const ansBtn = document.getElementById('toggle-ans-btn');
+            if (showingSolution) {
+                document.getElementById('code-editor').value = data.solution;
+                ansBtn.innerText = "切換回練習範本";
+            } else {
+                document.getElementById('code-editor').value = data.code;
+                ansBtn.innerText = "切換參考解答";
+            }
+        }
+
+        function resetCurrentTab() { switchTab(currentTabKey); }
+        function updateStdinValue(val) { window.currentStdin = val; }
+
+        function handleStartRun() {
+            window.currentStdin = document.getElementById('stdin-input').value;
+            runCode();
+        }
+    </script>
+</body>
+</html>
